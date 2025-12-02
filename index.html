@@ -51,87 +51,152 @@
 
         /* Navigation */
         nav {
-            position: fixed;
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+/* main pill bar */
+.nav-bar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.75rem 1.8rem;
+    min-width: 260px;
+    max-width: 480px;
+    background: rgba(245,245,245,0.95);
+    color: #000;
+    border-radius: 999px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    backdrop-filter: blur(18px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+nav.scrolled .nav-bar {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.65);
+}
+
+/* logo text (keep your font) */
+.nav-logo-text {
+    font-size: 0.9rem;
+    font-weight: 200;
+    letter-spacing: 0.35em;
+    text-decoration: none;
+    color: #000;
+}
+
+/* hamburger */
+.nav-toggle {
+    width: 20px;
+    height: 15px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: #000;
+    border-radius: 999px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* simple cart icon placeholder */
+.nav-cart {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #000;
+}
+.nav-cart img {
+    width: 20px;
+    height: auto;
+    filter: invert(90%);
+}
+
+/* slide-down panel */
+.nav-menu {
+    pointer-events: auto;
+    margin-top: 0.6rem;
+    padding: 1.4rem 1.8rem 1.6rem;
+    min-width: 260px;
+    max-width: 420px;
+    background: rgba(245,245,245,0.98);
+    color: #000;
+    border-radius: 24px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.nav-menu.open {
+    display: flex;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #000;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+/* mobile: bar stays same, just smaller */
+@media (max-width: 768px) {
+    .nav-bar {
+        min-width: 230px;
+        padding: 0.6rem 1.4rem;
+    }
+    .nav-logo-text {
+        letter-spacing: 0.25em;
+    }
+}
+
+        /* Sections wrapper (Nothing-like stacked layout) */
+        main {
             width: 100%;
-            padding: 2rem 4rem;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            margin-top: 80px;
         }
 
-        nav.scrolled {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 1rem 4rem;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 1rem;
-            font-weight: 200;
-            letter-spacing: 8px;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .logo img {
-            max-width: 50px;
-            display: block;
-            margin: 0 auto;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
-            to { text-shadow: 0 0 20px #fff, 0 0 30px #fff; }
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 3rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 300;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: #fff;
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
+        .section-shell {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            padding: 6rem 1.5rem;
         }
 
-        .hero-content {
-            text-align: center;
+        /* HERO (AION-1) */
+        .hero-section {
+            background: transparent;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-copy {
             z-index: 2;
             animation: fadeInUp 1s ease;
         }
@@ -147,8 +212,8 @@
             }
         }
 
-        .hero h1 {
-            font-size: clamp(3rem, 10vw, 8rem);
+        .hero-title {
+            font-size: clamp(3rem, 6vw, 4.5rem);
             font-weight: 100;
             letter-spacing: -2px;
             margin-bottom: 1rem;
@@ -165,17 +230,73 @@
             100% { background-position: 200% 0; }
         }
 
-        .hero p {
-            font-size: 1.5rem;
+        .hero-sub {
+            font-size: 1.1rem;
             font-weight: 200;
             opacity: 0.8;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             letter-spacing: 2px;
         }
 
-        /* Phone Display */
+        .hero-text {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            max-width: 420px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .primary-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2.6rem;
+            border-radius: 999px;
+            border: 1px solid #fff;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 2px;
+            font-weight: 300;
+            font-size: 0.8rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .primary-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .primary-cta:hover {
+            color: #000;
+        }
+
+        .primary-cta:hover::before {
+            left: 0;
+        }
+
+        .secondary-link {
+            display: inline-block;
+            margin-left: 1.5rem;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Phone Display (kept from original) */
         .phone-showcase {
-            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -197,7 +318,7 @@
         }
 
         .phone-model {
-            width: 300px;  
+            width: 320px;
             height: auto;
             transform-style: preserve-3d;
             transition: transform 0.5s ease;
@@ -209,43 +330,13 @@
         .phone-image {
             width: 100%;
             height: auto;
-            border-radius: 30px; 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
-        }
-
-
-        .phone-screen {
-            width: 280px;
-            height: 580px;
-            background: linear-gradient(45deg, #000, #111);
-            border-radius: 35px;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            overflow: hidden;
-        }
-
-        .screen-content {
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            font-weight: 100;
-            letter-spacing: 10px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0);
         }
 
         .phone-details {
             position: absolute;
-            bottom: 0%;
+            bottom: -80px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
@@ -258,92 +349,182 @@
         }
 
         .phone-name {
-            font-size: 3rem;
+            font-size: 2.2rem;
             font-weight: 100;
             letter-spacing: 5px;
-            margin-bottom: 1rem;
+            margin-bottom: 0.4rem;
         }
 
         .phone-tagline {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
             opacity: 0.7;
             letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        /* Features Section */
-        .features {
-            min-height: 100vh;
-            padding: 5rem 2rem;
+        /* PRODUCT SECTIONS (Nothing-style cards) */
+        .product-section {
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .product-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.25), rgba(0,0,0,0.9));
+            pointer-events: none;
+        }
+
+        .product-inner {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
             display: flex;
-            align-items: center;
             justify-content: center;
         }
 
-        .features-grid {
+        .product-card {
+            background: rgba(15,15,15,0.95);
+            border-radius: 24px;
+            padding: 2.2rem 2.4rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            max-width: 640px;
+            width: 100%;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 4rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 2rem;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            
         }
 
-        .feature-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .feature-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 1rem;
-            letter-spacing: 1px;
-        }
-
-        .feature-description {
+        .product-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
             opacity: 0.7;
-            line-height: 1.6;
-            font-weight: 200;
+            margin-bottom: 0.8rem;
         }
 
+        .product-title {
+            font-size: 1.6rem;
+            font-weight: 300;
+            margin-bottom: 0.6rem;
+        }
+
+        .product-copy {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.8rem;
+            line-height: 1.6;
+        }
+
+        .product-meta {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .product-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.7rem 1.9rem;
+            border-radius: 999px;
+            background: #fff;
+            color: #000;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+        }
+
+        .product-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+        }
+
+        .product-image-wrap {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .product-image {
+            max-width: 170px;
+            width: 100%;
+            border-radius: 999px;
+            background: radial-gradient(circle at center, #ffffff, #cccccc);
+            padding: 1rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        /* Example backgrounds (replace URLs with your assets) */
+        .product-audio {
+            background-image: url('./assets/Aionlinup.png');
+        }
+
+        .product-watch {
+            background-image: url('./assets/Ather-1a.png');
+            background-position: 0px -570px; 
+            background-repeat: no-repeat;
+        }
+
+
+        .product-accessory {
+            background-image: url('./assets/aionaccessories.jpg');
+        }
+
+        /* Background Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            opacity: 0.3;
+            animation: float-particle 20s infinite linear;
+        }
+
+        @keyframes float-particle {
+            from {
+                transform: translateY(100vh) translateX(0);
+            }
+            to {
+                transform: translateY(-100px) translateX(100px);
+            }
+        }
+
+        /* Footer CTA (minimal) */
         .cta {
-            height: 50vh;
+            min-height: 50vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03), transparent);
+            position: relative;
         }
 
         .cta-content h2 {
-            font-size: 3rem;
+            font-size: 2.4rem;
             font-weight: 100;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             letter-spacing: 2px;
         }
 
@@ -380,60 +561,60 @@
             left: 0;
         }
 
-        /* Background Particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #fff;
-            opacity: 0.3;
-            animation: float-particle 20s infinite linear;
-        }
-
-        @keyframes float-particle {
-            from {
-                transform: translateY(100vh) translateX(0);
-            }
-            to {
-                transform: translateY(-100px) translateX(100px);
-            }
-        }
-
         /* Mobile Responsiveness */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             nav {
-                padding: 1rem 2rem;
+                padding: 1rem 1.5rem;
             }
-            
+
             .nav-links {
                 display: none;
             }
-            
-            .hero h1 {
-                font-size: 3rem;
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
             }
-            
-            .phone-model {
-                width: 250px;
-                height: 500px;
+
+            .hero-copy {
+                order: 2;
             }
-            
-            .phone-screen {
-                width: 230px;
-                height: 480px;
+
+            .phone-showcase {
+                order: 1;
+            }
+
+            .phone-name {
+                font-size: 1.7rem;
+            }
+
+            .phone-details {
+                bottom: -30px;
+            }
+
+            .hero-text {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .secondary-link {
+                display: block;
+                margin: 1rem auto 0;
+            }
+
+            .product-card {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+
+            .product-image-wrap {
+                justify-content: flex-start;
+            }
+
+            .product-image {
+                max-width: 150px;
             }
         }
-        
     </style>
 </head>
 <body>
@@ -446,72 +627,129 @@
 
     <!-- Navigation -->
     <nav id="navbar">
-        <div class="nav-container">
-            <div class="logo"><img src="logo.png" alt="AION Logo">AION</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#phone">AION-1</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="contactus.html">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+  <div class="nav-bar">
+    <button class="nav-toggle" aria-label="Menu">
+      <span></span>
+      <span></span>
+    </button>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>AION-1</h1>
-            <p>Redefining Tomorrow</p>
-        </div>
-    </section>
+    <a href="#hero" class="nav-logo-text">AION</a>
 
-    <!-- Phone Showcase -->
-    <section class="phone-showcase" id="phone">
-        <div class="phone-container">
-            <div class="phone-model" id="phone3d">
-    <img src="./backright.png" alt="My Phone" class="phone-image">
-</div>
+    <a href="cart.html" class="nav-cart" aria-label="Cart"><img src="logo.png" alt=""></a>
+  </div>
 
-        </div>
-        <div class="phone-details">
-            <div class="phone-name">AION-1</div>
-            <div class="phone-tagline">Pure. Powerful. Perfect.</div>
-        </div>
-    </section>
+  <!-- slide-down menu -->
+  <div class="nav-menu" id="navMenu">
+    <a href="#hero">AION‑1</a>
+    <a href="#audio">Audio</a>
+    <a href="#watch">Watch</a>
+    <a href="#accessory">Accessories</a>
+    <a href="contactus.html">Contact</a>
+  </div>
+</nav>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">◉</div>
-                <div class="feature-title">Infinity Display is Back</div>
-                <div class="feature-description">6.2" Super-AMOLED display with a 1440x2960 resolution and 85% screen-to-body ratio.</div>
+    <main>
+        <!-- HERO / AION‑1 SECTION -->
+        <section class="section-shell hero-section" id="hero">
+            <div class="hero-inner">
+                <div class="hero-copy">
+                    <div class="hero-title">AION‑1</div>
+                    <div class="hero-sub">Redefining Tomorrow</div>
+                    <p class="hero-text">
+                        Pure, powerful and obsessively minimal. AION‑1 brings back the infinity display,
+                        practical dual cameras and bloat‑free software in a body designed for the next decade.
+                    </p>
+                    <a href="#aion1-store" class="primary-cta">SHOP AION‑1</a>
+                    <a href="#audio" class="secondary-link">Explore more products</a>
+                </div>
+
+                <div class="phone-showcase" id="phone">
+                    <div class="phone-container">
+                        <div class="phone-model" id="phone3d">
+                            <img src="./backright.png" alt="AION‑1 Phone" class="phone-image">
+                        </div>
+                        <div class="phone-details">
+                            <div class="phone-name">AION‑1</div>
+                            <div class="phone-tagline">Pure. Powerful. Perfect.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">📷</div>
-                <div class="feature-title">"Practical" Dual Camera Setup</div>
-                <div class="feature-description">Capture stunning photos with a much practical dual camera setup with a 12MP main sensor and a 12MP telephoto lens.</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">◈</div>
-                <div class="feature-title">Powered Processing</div>
-                <div class="feature-description">Get the most out of your device with our advanced processing capabilities of the very stable Exynos-9810.</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title">The Software You Deserve</div>
-                <div class="feature-description">Experience a seamless and intuitive interface with our latest software with a near "Stock Android Experience" and no "Bloatwares".</div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="cta-content">
-            <h2>Experience the Future</h2>
-            <a href="#" class="cta-button">NOTIFY ME</a>
-        </div>
-    </section>
+        <!-- PRODUCT SECTION 1 – AUDIO -->
+        <section class="section-shell product-section product-audio" id="audio">
+            <div class="product-inner">
+                <article class="product-card">
+                    <div>
+                        <div class="product-label">Concept</div>
+                        <h2 class="product-title">AION-1(The Lineup)</h2>
+                        <p class="product-copy">
+                            The ultimate android experience with the Lineup. 
+                            Experience the uncompromised, with AION-1, AION-1(a) and AION-1(b).
+
+                        </p>
+                        <div class="product-meta">AION Lineup</div>
+                    </div>
+                    <div class="product-image-wrap">
+                        <!-- replace src with your audio product render -->
+                         
+                        <a href="aion-1a.html" class="product-action">SHOP</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- PRODUCT SECTION 2 – WATCH -->
+        <section class="section-shell product-section product-watch" id="watch">
+            <div class="product-inner">
+                <article class="product-card">
+                    <div>
+                        <div class="product-label">Customizables</div>
+                        <h2 class="product-title">Customizeable Panels</h2>
+                        <p class="product-copy">
+                            True definition of "Your Phone Your Way",
+                            Get customized panels for your AION devices to match your style.
+                        </p>
+                        <div class="product-meta">Customizables ( 1 )</div>
+                    </div>
+                    <div class="product-image-wrap">
+                        <!-- replace src with your watch render -->
+                        <a href="aion-watch.html" class="product-action">SHOP</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- PRODUCT SECTION 3 – ACCESSORY -->
+        <section class="section-shell product-section product-accessory" id="accessory">
+            <div class="product-inner">
+                <article class="product-card">
+                    <div>
+                        <div class="product-label">Accessories</div>
+                        <h2 class="product-title">AION Accessories</h2>
+                        <p class="product-copy">
+                            Cases, chargers and docks that keep the design language consistent
+                            from pocket to desk. Built to last and made to disappear.
+                        </p>
+                        <div class="product-meta">Accessories ( 4 )</div>
+                    </div>
+                    <div class="product-image-wrap">
+                        <!-- replace src with your accessory render -->
+                        <a href="aion-accessories.html" class="product-action">SHOP</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- CTA / FOOTER STYLE -->
+        <section class="cta" id="aion1-store">
+            <div class="cta-content">
+                <h2>Experience the Future</h2>
+                <a href="#" class="cta-button">NOTIFY ME</a>
+            </div>
+        </section>
+    </main>
 
     <script>
         // Custom Cursor
@@ -521,7 +759,7 @@
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
-            
+
             setTimeout(() => {
                 follower.style.left = e.clientX - 10 + 'px';
                 follower.style.top = e.clientY - 10 + 'px';
@@ -543,7 +781,7 @@
         document.addEventListener('mousemove', (e) => {
             const x = (window.innerWidth / 2 - e.clientX) / 20;
             const y = (window.innerHeight / 2 - e.clientY) / 20;
-            
+
             if (phone3d) {
                 phone3d.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
             }
@@ -560,60 +798,49 @@
             particlesContainer.appendChild(particle);
         }
 
-        // Intersection Observer for Feature Cards
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, index * 100);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.feature-card').forEach(card => {
-            observer.observe(card);
-        });
-
+        // CTA notify behaviour
         document.querySelector('.cta-button').addEventListener('click', function(e) {
-  e.preventDefault();
-  const email = prompt('Please enter your email to be notified:');
-  if (email) {
-    alert('You will be notified with the latest updates at ' + email);
-    // Optional: Add logic here to save/store the email or send to backend
-  } else {
-    alert('Email not provided. Please try again.');
-  }
-});
-
+            e.preventDefault();
+            const email = prompt('Please enter your email to be notified:');
+            if (email) {
+                alert('You will be notified with the latest updates at ' + email);
+            } else {
+                alert('Email not provided. Please try again.');
+            }
+        });
 
         // Smooth Scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
                 }
             });
         });
 
-        // Parallax Effect
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallax = document.querySelector('.hero-content');
-            if (parallax) {
-                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
-            }
-        });
+        // Floating bar menu toggle
+const navToggle = document.querySelector('.nav-toggle');
+const navMenu = document.getElementById('navMenu');
+
+navToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('open');
+});
+
+// close menu on in-page link click
+navMenu.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('open');
+    });
+});
+
     </script>
 </body>
 </html>
