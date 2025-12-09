@@ -1,0 +1,457 @@
+<!-- Cart Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Cart | Aion</title>
+  <style>
+    :root {
+      --primary: #000;
+      --accent: #fff;
+      --pill-bg: rgba(22,22,22,0.96);
+      --pill: 999px;
+      --glow: rgba(255,255,255,0.07);
+      --cart-grid: minmax(0,540px) minmax(0,300px);
+    }
+    html, body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      margin: 0; padding: 0;
+    }
+    .dark-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-bottom: 2rem;
+    }
+    .cart-header {
+      text-align: center;
+      font-size: 2.1rem;
+      letter-spacing: 0.07em;
+      font-weight: 200;
+      margin-top: 3.2rem;
+      margin-bottom: 0.8rem;
+    }
+    .cart-panel {
+      margin: 0 auto 2.7rem auto;
+      background: var(--pill-bg);
+      border-radius: 24px;
+      max-width: 980px;
+      width: 90vw;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      padding: 2.4rem 2rem 2rem 2.2rem;
+      display: grid;
+      grid-template-columns: var(--cart-grid);
+      gap: 2.3rem;
+    }
+    .cart-table {
+      width: 100%;
+      border-radius: 16px;
+      border-collapse: collapse;
+      background: transparent;
+    }
+    .cart-table th, .cart-table td {
+      padding: 0.9rem 0.5rem;
+      text-align: left;
+      font-size: 0.98rem;
+    }
+    .cart-table th {
+      color: #aaa;
+      font-weight: 300;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .cart-item {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.98rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.4rem 0 0.6rem 0;
+    }
+    .cart-img {
+      width: 60px; height: 60px; border-radius: 16px;
+      object-fit: cover; background: #111;
+      box-shadow: 0 6px 12px var(--glow);
+    }
+    .cart-product-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .cart-product-title { font-weight: 400; letter-spacing: 0.02em; }
+    .cart-product-desc { color: #c6c6c6; font-size: 0.85rem; opacity: 0.7; margin-top: 1px; }
+    .cart-action { text-align: center;}
+    .cart-qty-picker {
+      background: #111;
+      border-radius: var(--pill);
+      display: inline-flex; align-items: center; gap: 1.1rem;
+      padding: 0.25rem 1.0rem;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 0.95rem;
+      color: #fff;
+      font-weight: 400;
+      min-width: 90px;
+      justify-content: center;
+      transition: border 0.18s, background 0.18s;
+    }
+    .cart-qty-picker:hover {
+      border-color: #fff;
+      background: #151515;
+    }
+    .cart-qty-btn {
+      background: #222;
+      border: none;
+      color: #fff;
+      font-size: 1.1rem;
+      border-radius: 50%;
+      width: 24px; height: 24px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.16s;
+    }
+    .cart-qty-btn:hover { background: #333; }
+    .cart-remove-btn {
+      background: transparent;
+      border: none;
+      color: #d66;
+      font-size: 1.4rem;
+      cursor: pointer;
+      margin-left: 0.14em;
+      transition: color 0.19s, transform 0.12s;
+    }
+    .cart-remove-btn:hover { color: #ff7a7a; transform: translateY(-1px); }
+    .cart-total-cell { font-size: 1rem; font-weight: 500;}
+    .cart-empty {
+      padding: 1.8rem 0 0.8rem 0;
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+
+    .cart-subpanel {
+      background: #101010e7;
+      border-radius: 18px;
+      padding: 1.6rem 1.5rem 1.4rem 1.5rem;
+      box-shadow: 0 2px 16px var(--glow);
+      color: #fff;
+      min-width: 250px;
+      max-width: 330px;
+      margin-left: auto;
+    }
+    .cart-summary-label { color: #aaa; letter-spacing:0.13em; font-size: 0.9rem;font-weight:300;margin-bottom:0.8rem;}
+    .cart-summary-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.5em; font-size: 0.95em;
+    }
+    .cart-summary-row.disc { color: #8fe08d; }
+    .cart-summary-row.fee { color: #ddd; }
+    .cart-summary-row.total { font-weight: 600; color: #fff; font-size: 1.05em; margin-top:0.4em;}
+    .cart-discount-field {
+      display: flex; width: 100%; gap: 0.7rem; margin-bottom: 1.1rem;
+    }
+    .cart-discount-input {
+      flex: 1;
+      border-radius: var(--pill);
+      border: 1px solid #444;
+      padding: 0.4em 0.96em;
+      background: #191919;
+      color: #fff;
+      font-size: 0.9em;
+      margin-right: 4px;
+      outline: none;
+      transition: border .15s;
+    }
+    .cart-discount-input:focus { border-color: #fff; }
+    .cart-discount-btn {
+      border-radius: var(--pill);
+      border: 1px solid #fff;
+      background: #232323;
+      padding: 0.45em 1.1em;
+      color: #fff;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: background .16s, color .14s;
+      white-space: nowrap;
+    }
+    .cart-discount-btn:hover {
+      background: #fff; color: #000;
+    }
+    .cart-checkout-btn {
+      display: block; width: 100%; margin-top: 1.3em;
+      background: #fff;
+      color: #000; font-weight: 500; font-size: 0.98em;
+      padding: 0.8em 0;
+      border-radius: var(--pill);
+      outline: none; border: none; cursor: pointer;
+      box-shadow: 0 2px 10px #2226;
+      transition: background 0.18s, transform 0.1s;
+    }
+    .cart-checkout-btn:hover {background:#ffe65b; color:#000; transform:translateY(-1px);}
+    .cart-warranty {
+      margin-top: 0.9rem; color: #bdbdbd; font-size: 0.83em;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .cart-update-btn {
+      background: #fff; color: #000; border: none;
+      border-radius: var(--pill); padding: 0.55em 2.0em;
+      font-size: 0.9em; font-weight: 400; margin: 1.1em 0 0 0;
+      cursor: pointer; transition: background 0.17s, transform 0.1s;
+      box-shadow: 0 2px 18px #1118;
+      display: inline-block;
+    }
+    .cart-update-btn:hover {background: #ffe65b; transform: translateY(-1px);}
+    .cart-footer {
+      width: 100%; text-align: center; color: #eee;
+      margin: 2.3rem 0 0.9rem 0; padding: 1.3rem 0 0.7rem 0;
+      border-top: 1px solid #232323;
+      font-size: 0.85em;
+      opacity: 0.36;
+      letter-spacing: 0.11em;
+    }
+    .cart-social {
+      display: flex; justify-content:center; gap: 0.8em; margin-top: 1em;
+    }
+    .cart-social a {
+      color:#fff;background:#222;border-radius:var(--pill);padding:0.26em 1.1em;text-decoration:none;
+      font-size:0.8em;opacity:0.75;transition:background .14s;
+    }
+    .cart-social a:hover{background:#ffe65b;color:#000; opacity:1;}
+
+    @media (max-width: 900px) {
+      .cart-panel { grid-template-columns: 1fr; gap: 2rem; padding: 2rem 1.4rem 1.8rem 1.4rem;}
+      .cart-subpanel { margin: 1rem 0 0 0; }
+      .cart-header { margin-top: 2rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="dark-container">
+    <div class="cart-header">Shopping Cart</div>
+    <section class="cart-panel">
+      <!-- Left: Items Table -->
+      <div>
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th style="width: 60%;">Product</th>
+              <th>Quantity</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="cartBody">
+          <!-- rows injected by JS -->
+          </tbody>
+        </table>
+        <div id="emptyMessage" class="cart-empty" style="display:none;">
+          Your cart is empty. Add something from the AION lineup.
+        </div>
+        <button class="cart-update-btn" id="updateCartBtn">Update Cart</button>
+      </div>
+      <!-- Right: Summary -->
+      <div>
+        <div class="cart-subpanel">
+          <div class="cart-summary-label">ORDER SUMMARY</div>
+          <form class="cart-discount-field" id="discountForm">
+            <input class="cart-discount-input" id="discountInput" type="text" placeholder="Discount code (AION10)">
+            <button type="submit" class="cart-discount-btn">Apply</button>
+          </form>
+          <div class="cart-summary-row">
+            <span>Sub Total</span>
+            <span id="summarySubtotal">$0.00 USD</span>
+          </div>
+          <div class="cart-summary-row disc" id="summaryDiscountRow" style="display:none;">
+            <span>Discount</span>
+            <span id="summaryDiscount">-$0.00 USD</span>
+          </div>
+          <div class="cart-summary-row fee">
+            <span>Delivery Fee</span>
+            <span id="summaryDelivery">$0.00 USD</span>
+          </div>
+          <div class="cart-summary-row total">
+            <span>Total</span>
+            <span id="summaryTotal">$0.00 USD</span>
+          </div>
+          <div class="cart-warranty">
+            <span>&#128274;</span>
+            <span>12-month warranty against manufacturer defects</span>
+          </div>
+          <button class="cart-checkout-btn" id="checkoutBtn">Checkout Now</button>
+        </div>
+      </div>
+    </section>
+    <footer class="cart-footer">
+      &copy;2025. All rights reserved.
+      <div class="cart-social">
+        <a href="#">Instagram</a>
+        <a href="#">Twitter</a>
+        <a href="#">Community</a>
+      </div>
+      <div style="margin-top:0.7em;">NEW DELHI, IN</div>
+    </footer>
+  </div>
+
+  <script>
+    // ----- DATA SETUP -----
+    const deliveryFee = 10;
+    const discountCodes = { 'aion10': 0.10 };
+
+    const defaultCart = [
+      {
+        id: 1,
+        name: "AION‑1",
+        desc: "Color: Graphite · 12/256GB",
+        image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
+        price: 699,
+        qty: 1
+      },
+      {
+        id: 2,
+        name: "AION Custom Panel",
+        desc: "Color: White",
+        image: "https://images.unsplash.com/photo-1526178613658-3e882eba87b8",
+        price: 69,
+        qty: 2
+      },
+      {
+        id: 3,
+        name: "AION Charger",
+        desc: "Type: US 30W",
+        image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308",
+        price: 25,
+        qty: 1
+      }
+    ];
+
+    let cart = JSON.parse(localStorage.getItem('aion-cart')) || defaultCart.slice();
+    let activeDiscount = null;
+
+    const cartBody = document.getElementById('cartBody');
+    const emptyMessage = document.getElementById('emptyMessage');
+    const summarySubtotal = document.getElementById('summarySubtotal');
+    const summaryDiscountRow = document.getElementById('summaryDiscountRow');
+    const summaryDiscount = document.getElementById('summaryDiscount');
+    const summaryDelivery = document.getElementById('summaryDelivery');
+    const summaryTotal = document.getElementById('summaryTotal');
+
+    // ----- RENDER -----
+    function renderCart() {
+      cartBody.innerHTML = '';
+      if (!cart.length) {
+        emptyMessage.style.display = 'block';
+      } else {
+        emptyMessage.style.display = 'none';
+      }
+
+      cart.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="cart-item">
+              <img src="${item.image}" class="cart-img" alt="">
+              <div class="cart-product-info">
+                <div class="cart-product-title">${item.name}</div>
+                <div class="cart-product-desc">${item.desc}</div>
+              </div>
+            </div>
+          </td>
+          <td class="cart-action">
+            <div class="cart-qty-picker">
+              <button class="cart-qty-btn" data-idx="${idx}" data-delta="-1">-</button>
+              <span>${item.qty}</span>
+              <button class="cart-qty-btn" data-idx="${idx}" data-delta="1">+</button>
+            </div>
+          </td>
+          <td class="cart-total-cell">$${(item.price * item.qty).toFixed(2)}</td>
+          <td class="cart-action">
+            <button class="cart-remove-btn" data-remove="${idx}" title="Remove">&times;</button>
+          </td>
+        `;
+        cartBody.appendChild(tr);
+      });
+
+      attachRowHandlers();
+      updateSummary();
+      localStorage.setItem('aion-cart', JSON.stringify(cart));
+    }
+
+    function attachRowHandlers() {
+      // quantity buttons
+      document.querySelectorAll('.cart-qty-btn').forEach(btn => {
+        btn.onclick = function () {
+          const idx = parseInt(this.getAttribute('data-idx'), 10);
+          const delta = parseInt(this.getAttribute('data-delta'), 10);
+          if (isNaN(idx) || isNaN(delta)) return;
+          cart[idx].qty += delta;
+          if (cart[idx].qty < 1) cart[idx].qty = 1;
+          renderCart();
+        };
+      });
+      // remove buttons
+      document.querySelectorAll('.cart-remove-btn').forEach(btn => {
+        btn.onclick = function () {
+          const idx = parseInt(this.getAttribute('data-remove'), 10);
+          if (isNaN(idx)) return;
+          cart.splice(idx, 1);
+          renderCart();
+        };
+      });
+    }
+
+    // ----- SUMMARY -----
+    function updateSummary() {
+      let subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      let discountAmount = 0;
+      if (activeDiscount) {
+        discountAmount = subtotal * activeDiscount;
+      }
+      const total = (subtotal - discountAmount) + (cart.length ? deliveryFee : 0);
+
+      summarySubtotal.textContent = `$${subtotal.toFixed(2)} USD`;
+      if (discountAmount > 0) {
+        summaryDiscountRow.style.display = '';
+        summaryDiscount.textContent = `-$${discountAmount.toFixed(2)} USD`;
+      } else {
+        summaryDiscountRow.style.display = 'none';
+      }
+      summaryDelivery.textContent = cart.length ? `$${deliveryFee.toFixed(2)} USD` : `$0.00 USD`;
+      summaryTotal.textContent = `$${total.toFixed(2)} USD`;
+    }
+
+    // ----- DISCOUNT FORM -----
+    document.getElementById('discountForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const code = document.getElementById('discountInput').value.trim().toLowerCase();
+      if (discountCodes[code]) {
+        activeDiscount = discountCodes[code];
+        alert('Discount applied.');
+      } else {
+        activeDiscount = null;
+        if (code) alert('Invalid code.');
+      }
+      updateSummary();
+    });
+
+    // ----- UPDATE CART BUTTON -----
+    document.getElementById('updateCartBtn').addEventListener('click', function () {
+      alert('Cart updated.');
+      renderCart();
+    });
+
+    // ----- CHECKOUT -----
+    document.getElementById('checkoutBtn').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!cart.length) {
+        alert('Your cart is empty.');
+        return;
+      }
+      alert('Checkout flow goes here (integrate payment/redirect).');
+    });
+
+    // initial render
+    renderCart();
+  </script>
+</body>
+</html>

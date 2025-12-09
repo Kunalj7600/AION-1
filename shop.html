@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AION Phones</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #000;
+      --card-bg: #101010;
+      --accent: #fff;
+      --pill: 999px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+      background:#000;
+      color:#fff;
+      overflow-x:hidden;
+      background:
+        linear-gradient(to bottom,rgba(0, 0, 0, 0.699),rgba(0, 0, 0, 0.692)),
+        url('./assets/shopbg.png') center/cover no-repeat;
+    }
+    .page-wrap{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    .top-bar{
+      margin-top:1.6rem;
+      margin-bottom:1.2rem;
+      text-align:center;
+      letter-spacing:0.25em;
+      font-size:0.9rem;
+      font-weight:200;
+    }
+    .title{
+      margin-top:5rem;
+      margin-bottom:2.2rem;
+      text-align:center;
+      font-size:2rem;
+      letter-spacing:0.35em;
+      font-weight:200;
+    }
+    nav {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+/* main pill bar */
+.nav-bar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.75rem 1.8rem;
+    min-width: 260px;
+    max-width: 480px;
+    background: rgba(245,245,245,0.95);
+    color: #000;
+    border-radius: 999px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    backdrop-filter: blur(18px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+nav.scrolled .nav-bar {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.65);
+}
+
+/* logo text (keep your font) */
+.nav-logo-text {
+    font-size: 0.9rem;
+    font-weight: 200;
+    letter-spacing: 0.35em;
+    text-decoration: none;
+    color: #000;
+}
+
+/* hamburger */
+.nav-toggle {
+    width: 20px;
+    height: 15px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: #000;
+    border-radius: 999px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* simple cart icon placeholder */
+.nav-cart {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #000;
+}
+.nav-cart img {
+    width: 20px;
+    height: auto;
+    filter: invert(90%);
+}
+
+/* slide-down panel */
+.nav-menu {
+    pointer-events: auto;
+    margin-top: 0.6rem;
+    padding: 1.4rem 1.8rem 1.6rem;
+    min-width: 260px;
+    max-width: 420px;
+    background: rgba(245,245,245,0.98);
+    color: #000;
+    border-radius: 24px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.nav-menu.open {
+    display: flex;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #000;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+/* mobile: bar stays same, just smaller */
+@media (max-width: 768px) {
+    .nav-bar {
+        min-width: 230px;
+        padding: 0.6rem 1.4rem;
+    }
+    .nav-logo-text {
+        letter-spacing: 0.25em;
+    }
+}
+
+    .phones-grid{
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:3rem;
+      padding:0 3vw 4rem 3vw;
+      justify-items:center;
+    }
+    .phone-card{
+      text-align:center;
+      cursor:pointer;
+      transition:transform .25s ease,filter .25s ease;
+    }
+    .phone-card:hover{
+      transform:translateY(-8px);
+      filter:brightness(1.05);
+    }
+    .phone-image-wrap{
+      width:260px;
+      max-width:80vw;
+      aspect-ratio:9/16;
+      border-radius:34px;
+      background:#111;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 22px 40px rgba(0,0,0,0.7);
+      overflow:hidden;
+    }
+    .phone-image{
+      width:145%;
+      height:auto;
+      object-fit:cover;
+      display:block;
+    }
+    .phone-image::-webkit-image-rendering{ 
+      image-rendering:pixelated;
+    }
+    .phone-name{
+      margin-top:1.4rem;
+      font-size:1.05rem;
+      letter-spacing:0.02em;
+    }
+    .phone-price{
+      margin-top:0.5rem;
+      font-size:0.85rem;
+      opacity:0.8;
+    }
+    .phone-price span.old{
+      text-decoration:line-through;
+      opacity:0.5;
+      margin-left:0.25rem;
+    }
+    .phone-cta{
+      margin-top:0.7rem;
+      font-size:0.75rem;
+      letter-spacing:0.2em;
+      opacity:0.65;
+    }
+    .cart-indicator{
+      position:fixed;
+      top:18px;
+      right:18px;
+      background:#f5f5f5;
+      color:#000;
+      border-radius:var(--pill);
+      padding:0.35rem 1.1rem;
+      font-size:0.75rem;
+      letter-spacing:0.18em;
+      cursor:pointer;
+      box-shadow:0 12px 30px rgba(0,0,0,0.7);
+    }
+    .cart-indicator span{
+      font-weight:600;
+    }
+    @media(max-width:900px){
+      .phones-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:2rem;
+        padding-bottom:3rem;
+      }
+    }
+    @media(max-width:640px){
+      .phones-grid{
+        grid-template-columns:1fr;
+      }
+      .title{font-size:1.6rem;letter-spacing:0.25em;}
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="cart-indicator" onclick="window.location.href='cart.html'">
+    BAG · <span id="cartCount">0</span>
+  </div>
+
+      <nav id="navbar">
+  <div class="nav-bar">
+    <button class="nav-toggle" aria-label="Menu">
+      <span></span>
+      <span></span>
+    </button>
+
+    <a href="#hero" class="nav-logo-text">AION</a>
+
+    <a href="cart.html" class="nav-cart" aria-label="Cart"><img src="logo.png" alt=""></a>
+  </div>
+
+  <!-- slide-down menu -->
+  <div class="nav-menu" id="navMenu">
+    <a href="#hero">AION‑1</a>
+    <a href="#audio">Lineup</a>
+    <a href="#watch">Customizables</a>
+    <a href="#accessory">Accessories</a>
+    <a href="contactus.html">Contact</a>
+  </div>
+</nav>
+  <div class="title">PHONES</div>
+
+  <section class="phones-grid">
+    <!-- AION‑1 -->
+    <article class="phone-card" onclick="openPhone('aion1')">
+      <div class="phone-image-wrap">
+        <img src="./assets/aion1.png" alt="AION‑1" class="phone-image">
+      </div>
+      <div class="phone-name">AION‑1</div>
+      <div class="phone-price">FROM ₹9,999 <span class="old"></span></div>
+      <div class="phone-cta">VIEW · BUY</div>
+    </article>
+
+    <!-- AION‑1(a) -->
+    <article class="phone-card" onclick="openPhone('aion1a')">
+      <div class="phone-image-wrap">
+        <img src="./assets/aion-1(a).png" alt="AION‑1(a)" class="phone-image">
+      </div>
+      <div class="phone-name">AION‑1(a)</div>
+      <div class="phone-price">FROM ₹19,999</div>
+      <div class="phone-cta">VIEW · BUY</div>
+    </article>
+
+    <!-- AION‑1(b) Lite -->
+    <article class="phone-card" onclick="openPhone('aion1b')">
+      <div class="phone-image-wrap">
+        <img src="./assets/aion1(b).png" alt="AION‑1(b) Lite" class="phone-image">
+      </div>
+      <div class="phone-name">AION‑1(b)</div>
+      <div class="phone-price">FROM ₹12,999</div>
+      <div class="phone-cta">VIEW · BUY</div>
+    </article>
+  </section>
+</div>
+
+<script>
+  // shared key used also by cart.html & product pages
+  const CART_KEY = 'aion-cart';
+
+  function getCart() {
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function cartCount() {
+    return getCart().reduce((sum, item) => sum + item.qty, 0);
+  }
+
+  function updateCartBadge() {
+    document.getElementById('cartCount').textContent = cartCount();
+  }
+
+  // phone mapping -> dedicated product pages
+  function openPhone(id) {
+    if (id === 'aion1') window.location.href = './phones/aion-1.html';
+    else if (id === 'aion1a') window.location.href = './phones/aion1(a).html';
+    else if (id === 'aion1b') window.location.href = './phones/aion1(b).html';
+  }
+
+  updateCartBadge();
+</script>
+</body>
+</html>

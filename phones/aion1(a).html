@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AION‑1 | Buy</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    :root{
+      --bg:#000;
+      --panel:#181818ee;
+      --accent:#fff;
+      --pill:999px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+      background:#000;
+      color:#fff;
+      overflow-x:hidden;
+    }
+
+    /* HERO + PANEL */
+    .hero{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top,rgba(255,255,255,0.08),transparent 55%),
+        url('../assets/aion-1(a bg).png') center/cover no-repeat fixed;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:5rem 1.5rem 4rem;
+      position:relative;
+    }
+    .overlay{
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at center,rgba(0,0,0,0.1),rgba(0,0,0,0.82));
+    }
+    .content{
+      position:relative;
+      z-index:1;
+      max-width:1100px;
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:2.5rem;
+    }
+    .hero-nav{
+      position:fixed;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(245,245,245,0.94);
+      color:#000;
+      border-radius:var(--pill);
+      padding:0.55rem 1.7rem;
+      display:flex;
+      align-items:center;
+      gap:1.7rem;
+      box-shadow:0 16px 38px rgba(0,0,0,0.7);
+      letter-spacing:0.25em;
+      font-size:0.7rem;
+      z-index:5;
+    }
+    .hero-nav span.logo{font-weight:200;}
+    .hero-nav span.bag{cursor:pointer;}
+
+    .phone-panel{
+  width:50%;
+  max-width:720px;
+  background:var(--panel);
+  border-radius:30px;
+  padding:1.2rem 1.6rem;      /* base = medium */
+  box-shadow:0 26px 50px rgba(0,0,0,0.85);
+  display:flex;
+  flex-direction:column;
+  gap:0.9rem;
+  backdrop-filter: blur(2px);
+  transition:
+    transform .25s ease,
+    opacity .25s ease,
+    padding .25s ease,
+    gap .25s ease,
+    max-height .25s ease;
+  cursor:pointer;
+  overflow:hidden;
+}
+
+.phone-panel.collapsed{
+  padding:0.9rem 1.4rem;     
+  gap:0.4rem;
+  max-height:200px;           
+}
+
+.phone-panel.collapsed .phone-title{
+  font-size:1.05rem;
+  letter-spacing:0.16em;
+}
+
+/* hide only the descriptive fluff in collapsed */
+.phone-panel.collapsed .bullets,
+.phone-panel.collapsed .chips-row{
+  display:none;
+}
+
+/* keep options, price and CTA visible even when collapsed */
+.phone-panel.collapsed .option-row,
+.phone-panel.collapsed .price-row,
+.phone-panel.collapsed .cta-row{
+  display:flex;
+}
+
+/* fully expanded (hover) */
+.phone-panel:hover{
+  padding:2.1rem 2.2rem 2rem;
+  gap:1.5rem;
+  max-height:600px;           /* enough to show everything */
+}
+
+.phone-panel:hover .bullets,
+.phone-panel:hover .option-row,
+.phone-panel:hover .price-row,
+.phone-panel:hover .cta-row,
+.phone-panel:hover .chips-row{
+  display:flex;
+}
+
+.phone-panel:hover .bullets{
+  display:block;
+}
+
+/* hidden on scroll‑down still works */
+.phone-panel.hidden{
+  transform:translateY(25px);
+  opacity:0;
+  pointer-events:none;
+}
+
+    .phone-panel:hover{
+      padding:2.1rem 2.2rem 2rem;
+      gap:1.5rem;
+    }
+    .phone-panel:hover .bullets,
+    .phone-panel:hover .option-row,
+    .phone-panel:hover .price-row,
+    .phone-panel:hover .cta-row,
+    .phone-panel:hover .chips-row{
+      display:flex;
+    }
+    .phone-panel:hover .bullets{display:block;}
+
+    .phone-title{
+      font-size:1.25rem;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      opacity:0.9;
+    }
+    .bullets{
+      margin-top:0.8rem;
+      list-style:none;
+      font-size:0.9rem;
+      opacity:0.9;
+    }
+    .bullets li{
+      margin-bottom:0.4rem;
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+    }
+    .dot{width:6px;height:6px;border-radius:50%;background:#fff;}
+
+    .option-row{
+      display:flex;
+      gap:0.9rem;
+      margin-top:1.2rem;
+      flex-wrap:wrap;
+    }
+    .option-pill{
+      flex:1 1 45%;
+      min-width:180px;
+      background:#111;
+      border-radius:18px;
+      padding:0.7rem 1rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:0.86rem;
+      border:1px solid rgba(255,255,255,0.12);
+      cursor:pointer;
+      opacity:0.85;
+      transition:background .18s,border .18s,opacity .18s,transform .1s;
+    }
+    .option-pill span.label{opacity:0.8;}
+    .option-pill span.value{font-weight:500;}
+    .option-pill.active{
+      background:#f5f5f5;
+      color:#000;
+      border-color:#fff;
+      opacity:1;
+      transform:translateY(-1px);
+    }
+
+    .price-row{
+      margin-top:1.2rem;
+      font-size:0.9rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0.5rem;
+    }
+    .price-main{font-weight:600;}
+    .price-old{text-decoration:line-through;opacity:0.4;font-size:0.82rem;}
+    .price-tag{opacity:0.7;font-size:0.8rem;}
+
+    .cta-row{margin-top:0.9rem;}
+    .add-btn{
+      width:100%;
+      display:block;
+      border-radius:20px;
+      background:#fff;
+      color:#000;
+      text-align:center;
+      padding:0.9rem 0.5rem;
+      border:none;
+      font-size:0.85rem;
+      letter-spacing:0.22em;
+      text-transform:uppercase;
+      cursor:pointer;
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
+      transition:background .2s,transform .1s;
+    }
+    .add-btn:hover{
+      background:#ffe65b;
+      transform:translateY(-1px);
+    }
+
+    .chips-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:1.3rem;
+      margin-top:0.8rem;
+      font-size:0.78rem;
+      text-transform:uppercase;
+      opacity:0.75;
+    }
+    .chip{display:flex;flex-direction:column;gap:0.2rem;min-width:90px;}
+    .chip span.label{opacity:0.6;font-size:0.7rem;}
+    .chip span.value{font-weight:400;}
+
+    /* SHOWCASE SECTIONS */
+    .sections-wrap{
+      background:#050505;
+    }
+    .color-section{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:4rem 1.5rem;
+      position:relative;
+    }
+    /* custom image backgrounds */
+    .color-section--Black{
+      background:
+        linear-gradient(to bottom,rgba(0, 0, 0, 0.63),rgba(0, 0, 0, 0.575)),
+        url('../assets/bgai2.png') center/cover no-repeat;
+    }
+    .color-section--white{
+      background:
+        linear-gradient(to bottom,rgba(0,0,0,0.40),rgba(0,0,0,0.95)),
+        url('../assets/aiwbg.png') center/cover no-repeat;
+    }
+
+    .color-section-inner{
+      max-width:1100px;
+      width:100%;
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:3rem;
+      align-items:center;
+    }
+    .color-copy h2{
+      font-size:1.7rem;
+      font-weight:300;
+      margin-bottom:0.7rem;
+    }
+    .color-copy p{
+      font-size:0.95rem;
+      opacity:0.8;
+      max-width:430px;
+      line-height:1.6;
+    }
+
+    /* glass gallery slideshow */
+    .glass-gallery{
+      position:relative;
+      max-width:360px;
+      width:100%;
+      padding:1.2rem;
+      border-radius:24px;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.22);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      box-shadow:0 22px 45px rgba(0,0,0,0.85);
+      overflow:hidden;
+      margin-left: auto;
+      margin-right: -1rem;
+    }
+    .gallery-viewport{
+      position:relative;
+      width:100%;
+      overflow:hidden;
+      border-radius:18px;
+    }
+    .gallery-track{
+      display:flex;
+      transition:transform .45s ease;
+      will-change:transform;
+    }
+    .gallery-item{
+      flex:0 0 100%;
+      border-radius:18px;
+      object-fit:cover;
+      width:100%;
+      height:auto;
+      filter:drop-shadow(0 25px 45px rgba(0,0,0,0.9));
+    }
+
+    .gallery-nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:32px;
+      height:32px;
+      border-radius:999px;
+      border:1px solid rgba(255, 255, 255, 0);
+      background:rgba(0,0,0,0.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:16px;
+      cursor:pointer;
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      transition:background .18s,transform .12s,opacity .18s;
+      opacity:0.8;
+    }
+    .gallery-nav-btn:hover{
+      background:rgba(255,255,255,0.85);
+      color:#000;
+      transform:translateY(-50%) scale(1.05);
+      opacity:1;
+    }
+    .gallery-nav-btn.prev{left:22px;}
+    .gallery-nav-btn.next{right:22px;}
+
+    @media(max-width:900px){
+      .phone-panel{
+        width:100%;
+        padding:1.2rem 1.0rem;
+      }
+      .color-section-inner{
+        grid-template-columns:1fr;
+        text-align:left;
+      }
+      .color-copy p{max-width:none;}
+    }
+  </style>
+</head>
+<body>
+  <!-- floating nav -->
+  <div class="hero-nav">
+    <span class="logo">AION</span>
+    <span class="bag" onclick="window.location.href='../cart.html'">BAG</span>
+  </div>
+
+  <!-- hero with panel -->
+  <section class="hero">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="phone-panel collapsed" id="phonePanel">
+        <div class="phone-title">AION‑1(a)</div>
+        <ul class="bullets">
+          <li><span class="dot"></span><span>Infinity AMOLED · 1440p · 120 Hz</span></li>
+          <li><span class="dot"></span><span>Exynos 9810 tuned for stability</span></li>
+          <li><span class="dot"></span><span>Practical 12 MP dual camera system</span></li>
+          <li><span class="dot"></span><span>Near‑stock Android · zero bloat</span></li>
+        </ul>
+
+        <div class="option-row" id="colorOptions">
+          <div class="option-pill active" data-value="black">
+            <span class="label">Colour</span>
+            <span class="value">Black</span>
+          </div>
+          <div class="option-pill" data-value="white">
+            <span class="label">Colour</span>
+            <span class="value">White</span>
+          </div>
+        </div>
+
+        <div class="option-row" id="storageOptions">
+          <div class="option-pill active" data-value="12/256">
+            <span class="label">Storage</span>
+            <span class="value">12+256GB</span>
+          </div>
+          <div class="option-pill" data-value="8/128">
+            <span class="label">Storage</span>
+            <span class="value">8+128GB</span>
+          </div>
+        </div>
+
+        <div class="price-row">
+          <span class="price-main" id="priceMain">₹19,999</span>
+          <span class="price-old" id="priceOld">₹21,999</span>
+          <span class="price-tag">INCLUSIVE OF TAXES</span>
+        </div>
+
+        <div class="cta-row">
+          <button class="add-btn" id="addToBagBtn">ADD TO BAG</button>
+        </div>
+
+        <div class="chips-row">
+          <div class="chip">
+            <span class="label">Specs</span>
+            <span class="value">Technical</span>
+          </div>
+          <div class="chip">
+            <span class="label">Performance</span>
+            <span class="value">Octa-core, 8s Gen class</span>
+          </div>
+          <div class="chip">
+            <span class="label">Software</span>
+            <span class="value">AION OS 1.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- scrolling showcase sections -->
+  <main class="sections-wrap">
+    <!-- Black showcase -->
+    <section class="color-section color-section--Black" id="sectionblack">
+      <div class="color-section-inner">
+        <div class="color-copy">
+          <h2>Black</h2>
+          <p>Industrial, understated and endlessly sharp. Black keeps the AION‑1(a) invisible until light hits the rails and camera rings.</p>
+        </div>
+
+        <div class="glass-gallery">
+          <div class="gallery-viewport">
+            <div class="gallery-track" id="blackGallery">
+              <img src="../assets/aion1(a)black.png"         class="gallery-item" alt="AION‑1 black front">
+              <img src="../assets/naion1agal.png"            class="gallery-item" alt="AION‑1 black back">
+              <img src="../assets/aion1ablack/nobgf.png"     class="gallery-item" alt="AION‑1 black angle">
+              <img src="../assets/aion1ablack/topleft.png"   class="gallery-item" alt="Top-left">
+              <img src="../assets/aion1ablack/topright.png"  class="gallery-item" alt="Top-right">
+            </div>
+          </div>
+          <button class="gallery-nav-btn prev" data-gallery="blackGallery">&lt;</button>
+          <button class="gallery-nav-btn next" data-gallery="blackGallery">&gt;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- White showcase -->
+    <section class="color-section color-section--white" id="sectionWhite">
+      <div class="color-section-inner">
+        <div class="color-copy">
+          <h2>White</h2>
+          <p>Clean, minimal and unapologetically bright. White turns the internals and panels of AION‑1(a) into a piece of functional art.</p>
+        </div>
+
+        <div class="glass-gallery">
+          <div class="gallery-viewport">
+            <div class="gallery-track" id="whiteGallery">
+              <img src="../assets/aion-1(a).png"       class="gallery-item" alt="AION‑1 white front">
+              <img src="../assets/aibg.png"            class="gallery-item" alt="AION‑1 white back">
+              <img src="../assets/Aion-1a white.png"   class="gallery-item" alt="AION‑1 white angle">
+            </div>
+          </div>
+          <button class="gallery-nav-btn prev" data-gallery="whiteGallery">&lt;</button>
+          <button class="gallery-nav-btn next" data-gallery="whiteGallery">&gt;</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  const CART_KEY = 'aion-cart';
+
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+    catch { return []; }
+  }
+  function saveCart(cart) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  }
+
+  function selectOption(groupId, target) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.option-pill').forEach(p => p.classList.remove('active'));
+    target.classList.add('active');
+  }
+
+  // colour pills scroll to relevant section
+  document.getElementById('colorOptions').addEventListener('click', e => {
+    const pill = e.target.closest('.option-pill');
+    if (!pill) return;
+    selectOption('colorOptions', pill);
+    const color = pill.getAttribute('data-value');
+
+    if (color === 'black') {
+      document.getElementById('sectionblack').scrollIntoView({behavior:'smooth'});
+    } else {
+      document.getElementById('sectionWhite').scrollIntoView({behavior:'smooth'});
+    }
+  });
+
+  // storage pills + price
+  document.getElementById('storageOptions').addEventListener('click', e => {
+    const pill = e.target.closest('.option-pill');
+    if (!pill) return;
+    selectOption('storageOptions', pill);
+    const val = pill.getAttribute('data-value');
+    const main = document.getElementById('priceMain');
+    const old = document.getElementById('priceOld');
+    if (val === '8/128') {
+      main.textContent = '₹19,999';
+      old.textContent = '₹21,999';
+    } else {
+      main.textContent = '₹22,999';
+      old.textContent = '₹24,999';
+    }
+  });
+
+  // ADD TO BAG
+  document.getElementById('addToBagBtn').addEventListener('click', () => {
+    const color = document.querySelector('#colorOptions .option-pill.active').getAttribute('data-value');
+    const storage = document.querySelector('#storageOptions .option-pill.active').getAttribute('data-value');
+    const priceText = document.getElementById('priceMain').textContent.replace(/[^\d]/g,'');
+    const price = parseInt(priceText,10) || 0;
+
+    const cart = getCart();
+    const key = `aion1-${color}-${storage}`;
+    const existing = cart.find(i => i.key === key);
+    const imagePath = (color === 'white')
+      ? '../assets/aibg.png'
+      : '../assets/aion1(a)black.png';
+
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({
+        key,
+        id: 'aion1',
+        name: `AION‑1 (${color}, ${storage})`,
+        desc: `${color} · ${storage}GB`,
+        image: imagePath,
+        price,
+        qty: 1
+      });
+    }
+    saveCart(cart);
+    window.location.href = '../cart.html';
+  });
+
+  // hide panel on scroll down, collapse by default; expand when scrolling up
+  const panel = document.getElementById('phonePanel');
+let lastScrollY = window.pageYOffset;
+
+window.addEventListener('scroll', () => {
+  const current = window.pageYOffset;
+  const goingDown = current > lastScrollY;
+
+  if (current > 80) {
+    if (goingDown) {
+      panel.classList.add('hidden');        // slide away
+    } else {
+      panel.classList.remove('hidden');     // bring back
+      panel.classList.remove('collapsed');  // expand when scrolling up
+    }
+  } else {
+    panel.classList.remove('hidden');
+    panel.classList.add('collapsed');       // half‑collapsed near the top
+  }
+  lastScrollY = current;
+});
+
+// also expand on click
+panel.addEventListener('click', () => {
+  panel.classList.remove('collapsed');
+});
+
+
+  // --- SLIDESHOW LOGIC FOR BOTH GALLERIES ---
+  function initGallery(id){
+    const track = document.getElementById(id);
+    if (!track) return;
+    const slides = Array.from(track.querySelectorAll('.gallery-item'));
+    let index = 0;
+
+    function update(){
+      const offset = -index * 100;
+      track.style.transform = `translateX(${offset}%)`;
+    }
+
+    function next(){
+      index = (index + 1) % slides.length;
+      update();
+    }
+    function prev(){
+      index = (index - 1 + slides.length) % slides.length;
+      update();
+    }
+
+    document.querySelectorAll(`[data-gallery="${id}"]`).forEach(btn=>{
+      if (btn.classList.contains('next')) btn.onclick = next;
+      else btn.onclick = prev;
+    });
+
+    update();
+  }
+
+  initGallery('blackGallery');
+  initGallery('whiteGallery');
+</script>
+</body>
+</html>
