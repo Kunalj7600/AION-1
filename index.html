@@ -3,8 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png" />
     <title>Aion - Pure Innovation</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Config for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['monospace'],
+                    },
+                    transitionDuration: {
+                        '1000': '1000ms',
+                    },
+                    transitionTimingFunction: {
+                        'split-ease': 'cubic-bezier(0.77, 0, 0.175, 1)',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -22,20 +51,82 @@
             background: #000;
             color: #fff;
             overflow-x: hidden;
-            cursor: none;
+            cursor: none; 
         }
 
-        /* Custom Cursor */
+        /* --- SPLIT LOGO TRANSITION STYLES --- */
+        #split-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            pointer-events: none;
+            display: flex;
+        }
+
+        .panel {
+            position: relative;
+            width: 50%;
+            height: 100%;
+            background-color: #000;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            will-change: transform;
+            overflow: hidden;
+        }
+
+        /* Logo Halves Setup */
+        .half-logo {
+            position: absolute;
+            top: 50%;
+            width: 120px; /* Adjust based on logo size */
+            height: 200px;
+            transform: translateY(-50%);
+            background-image: url('logo.png');
+            background-size: 240px auto; /* Double the width to show half */
+            background-repeat: no-repeat;
+            /* Filter to invert logo if needed, assuming logo.png is black on transp or white on transp */
+            filter: invert(0); 
+        }
+
+        #panel-left .half-logo {
+            right: 0;
+            background-position: left center;
+        }
+
+        #panel-right .half-logo {
+            left: 0;
+            background-position: right center;
+        }
+
+        /* STATE: CLOSED (Joined in Center) - Default on Load */
+        body.transition-closed #panel-left {
+            transform: translateX(0);
+        }
+        body.transition-closed #panel-right {
+            transform: translateX(0);
+        }
+
+        /* STATE: OPEN (Split to Edges) - Applied after load */
+        body.transition-open #panel-left {
+            transform: translateX(-100%);
+        }
+        body.transition-open #panel-right {
+            transform: translateX(100%);
+        }
+
+
+        /* --- CUSTOM CURSOR STYLES --- */
         .cursor {
             width: 20px;
             height: 20px;
             border: 2px solid #fff;
             border-radius: 50%;
             position: fixed;
+            top: 0;
+            left: 0;
             pointer-events: none;
-            z-index: 9999;
-            transition: all 0.1s ease;
+            z-index: 10001; /* Above transition */
             mix-blend-mode: difference;
+            will-change: transform;
         }
 
         .cursor-follower {
@@ -44,130 +135,14 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             position: fixed;
+            top: 0;
+            left: 0;
             pointer-events: none;
             z-index: 9998;
-            transition: all 0.3s ease;
+            will-change: transform;
         }
 
-        /* Navigation */
-        nav {
-    position: fixed;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
-}
-
-/* main pill bar */
-.nav-bar {
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding: 0.75rem 1.8rem;
-    min-width: 260px;
-    max-width: 480px;
-    background: rgba(245,245,245,0.95);
-    color: #000;
-    border-radius: 999px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-    backdrop-filter: blur(18px);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
-
-nav.scrolled .nav-bar {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba(0,0,0,0.65);
-}
-
-/* logo text (keep your font) */
-.nav-logo-text {
-    font-size: 0.9rem;
-    font-weight: 200;
-    letter-spacing: 0.35em;
-    text-decoration: none;
-    color: #000;
-}
-
-/* hamburger */
-.nav-toggle {
-    width: 20px;
-    height: 15px;
-    border: none;
-    background: transparent;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-}
-
-.nav-toggle span {
-    display: block;
-    height: 2px;
-    width: 100%;
-    background: #000;
-    border-radius: 999px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-/* simple cart icon placeholder */
-.nav-cart {
-    font-size: 0.9rem;
-    text-decoration: none;
-    color: #000;
-}
-.nav-cart img {
-    width: 20px;
-    height: auto;
-    filter: invert(90%);
-}
-
-/* slide-down panel */
-.nav-menu {
-    pointer-events: auto;
-    margin-top: 0.6rem;
-    padding: 1.4rem 1.8rem 1.6rem;
-    min-width: 260px;
-    max-width: 420px;
-    background: rgba(245,245,245,0.98);
-    color: #000;
-    border-radius: 24px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.55);
-    display: none;
-    flex-direction: column;
-    gap: 0.75rem;
-    font-size: 0.85rem;
-}
-
-.nav-menu.open {
-    display: flex;
-}
-
-.nav-menu a {
-    text-decoration: none;
-    color: #000;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-}
-
-/* mobile: bar stays same, just smaller */
-@media (max-width: 768px) {
-    .nav-bar {
-        min-width: 230px;
-        padding: 0.6rem 1.4rem;
-    }
-    .nav-logo-text {
-        letter-spacing: 0.25em;
-    }
-}
-
-        /* Sections wrapper (Nothing-like stacked layout) */
+        /* --- SECTIONS WRAPPER --- */
         main {
             width: 100%;
             margin-top: 80px;
@@ -182,7 +157,7 @@ nav.scrolled .nav-bar {
             padding: 6rem 1.5rem;
         }
 
-        /* HERO (AION-1) */
+        /* --- HERO (AION-1) --- */
         .hero-section {
             background: transparent;
         }
@@ -202,14 +177,8 @@ nav.scrolled .nav-bar {
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-title {
@@ -295,7 +264,7 @@ nav.scrolled .nav-bar {
             color: rgba(255,255,255,0.7);
         }
 
-        /* Phone Display (kept from original) */
+        /* --- PHONE DISPLAY --- */
         .phone-showcase {
             display: flex;
             align-items: center;
@@ -321,7 +290,7 @@ nav.scrolled .nav-bar {
             width: 320px;
             height: auto;
             transform-style: preserve-3d;
-            transition: transform 0.5s ease;
+            will-change: transform; /* Performance Hint */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -362,7 +331,7 @@ nav.scrolled .nav-bar {
             text-transform: uppercase;
         }
 
-        /* PRODUCT SECTIONS (Nothing-style cards) */
+        /* --- PRODUCT SECTIONS --- */
         .product-section {
             background-size: cover;
             background-position: center;
@@ -398,7 +367,6 @@ nav.scrolled .nav-bar {
             gap: 2rem;
             align-items: center;
             border: 1px solid rgba(255,255,255,0.08);
-            
         }
 
         .product-label {
@@ -464,24 +432,18 @@ nav.scrolled .nav-bar {
             padding: 1rem;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
-
-        /* Example backgrounds (replace URLs with your assets) */
-        .product-audio {
-            background-image: url('./assets/Aionlinup.png');
+        
+        #aionpod .product-card {           
+            transform: translate(-190px, 20px); 
         }
 
-        .product-watch {
-            background-image: url('./assets/Ather-1a.png');
-            background-position: 0px -570px; 
-            background-repeat: no-repeat;
-        }
+        /* Example backgrounds */
+        .product-audio { background-image: url('./assets/Aionlinup.png'); }
+        .product-watch { background-image: url('./assets/Ather-1a.png'); background-position: 0px -570px; background-repeat: no-repeat; }
+        .product-accessory { background-image: url('./assets/aionaccessories.jpg'); }
+        .product-aionpod { background-image: url('./assets/aionpod/aionpod 3.png'); background-position: 200px -650px; }
 
-
-        .product-accessory {
-            background-image: url('./assets/aionaccessories.jpg');
-        }
-
-        /* Background Particles */
+        /* --- PARTICLES --- */
         .particles {
             position: fixed;
             top: 0;
@@ -494,23 +456,20 @@ nav.scrolled .nav-bar {
 
         .particle {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
             background: #fff;
             opacity: 0.3;
             animation: float-particle 20s infinite linear;
         }
 
         @keyframes float-particle {
-            from {
-                transform: translateY(100vh) translateX(0);
-            }
-            to {
-                transform: translateY(-100px) translateX(100px);
-            }
+            from { transform: translateY(100vh) translateX(0); }
+            to { transform: translateY(-100px) translateX(100px); }
         }
 
-        /* Footer CTA (minimal) */
+        /* --- FOOTER CTA --- */
         .cta {
             min-height: 50vh;
             display: flex;
@@ -563,61 +522,146 @@ nav.scrolled .nav-bar {
 
         /* Mobile Responsiveness */
         @media (max-width: 900px) {
-            nav {
-                padding: 1rem 1.5rem;
-            }
+            .hero-inner { grid-template-columns: 1fr; text-align: center; }
+            .hero-copy { order: 2; }
+            .phone-showcase { order: 1; }
+            .phone-name { font-size: 1.7rem; }
+            .phone-details { bottom: -30px; }
+            .hero-text { margin-left: auto; margin-right: auto; }
+            .secondary-link { display: block; margin: 1rem auto 0; }
+            .product-card { grid-template-columns: 1fr; text-align: left; }
+            .product-image-wrap { justify-content: flex-start; }
+            .product-image { max-width: 150px; }
+        }
 
-            .nav-links {
-                display: none;
-            }
+        /* --- AI CHAT STYLES --- */
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9990;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .ai-chat-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .ai-chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            width: 320px;
+            height: 450px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            z-index: 9990;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .ai-chat-window.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
 
-            .hero-inner {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
+        .chat-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
 
-            .hero-copy {
-                order: 2;
-            }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
 
-            .phone-showcase {
-                order: 1;
-            }
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            line-height: 1.4;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: white;
+            color: black;
+            border-bottom-right-radius: 2px;
+        }
+        .message.ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-bottom-left-radius: 2px;
+        }
 
-            .phone-name {
-                font-size: 1.7rem;
-            }
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .chat-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-            .phone-details {
-                bottom: -30px;
-            }
-
-            .hero-text {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .secondary-link {
-                display: block;
-                margin: 1rem auto 0;
-            }
-
-            .product-card {
-                grid-template-columns: 1fr;
-                text-align: left;
-            }
-
-            .product-image-wrap {
-                justify-content: flex-start;
-            }
-
-            .product-image {
-                max-width: 150px;
-            }
+        .chat-send-btn {
+            background: white;
+            color: black;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
     </style>
 </head>
-<body>
+<body class="selection:bg-white selection:text-black transition-closed">
+    
     <!-- Custom Cursor -->
     <div class="cursor"></div>
     <div class="cursor-follower"></div>
@@ -625,28 +669,80 @@ nav.scrolled .nav-bar {
     <!-- Particles Background -->
     <div class="particles" id="particles"></div>
 
-    <!-- Navigation -->
-    <nav id="navbar">
-  <div class="nav-bar">
-    <button class="nav-toggle" aria-label="Menu">
-      <span></span>
-      <span></span>
+    <!-- SPLIT LOGO TRANSITION LAYER -->
+    <div id="split-layer">
+        <div class="panel" id="panel-left">
+            <div class="half-logo"></div>
+        </div>
+        <div class="panel" id="panel-right">
+            <div class="half-logo"></div>
+        </div>
+    </div>
+
+    <!-- AI CHAT COMPONENT -->
+    <button class="ai-chat-btn" id="aiChatToggle">
+        <img src="logo.png" alt="AI" class="w-6 h-6 object-contain" style="filter: invert(0);">
     </button>
 
-    <a href="#hero" class="nav-logo-text">AION</a>
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="chat-header">
+            <span>AION INTELLIGENCE</span>
+            <button id="closeChat" class="hover:text-gray-400"><i data-lucide="x" width="16"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai">
+                Hello. I am the AION virtual assistant. How can I guide your journey today?
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Ask about AION devices...">
+            <button id="sendMessage" class="chat-send-btn">
+                <i data-lucide="arrow-up" width="16"></i>
+            </button>
+        </div>
+    </div>
 
-    <a href="cart.html" class="nav-cart" aria-label="Cart"><img src="logo.png" alt=""></a>
-  </div>
+    <!-- NEW NAVIGATION LAYER (Integrated from previous design) -->
+    <nav id="navbar" class="fixed top-5 left-0 w-full z-50 flex flex-col items-center pointer-events-none transition-transform duration-300">
+        
+        <!-- Main Bar -->
+        <div class="pointer-events-auto bg-white/90 backdrop-blur-xl text-black px-8 py-3 rounded-full flex items-center justify-between gap-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 min-w-[300px] relative z-20">
+            <button id="menu-toggle" class="w-5 h-5 flex flex-col justify-between group hover:opacity-60 transition-opacity focus:outline-none" aria-label="Menu">
+                <!-- Hamburger Icon -->
+                <span class="w-full h-[2px] bg-black rounded-full group-hover:w-3/4 transition-all"></span>
+                <span class="w-3/4 h-[2px] bg-black rounded-full group-hover:w-full transition-all self-end"></span>
+            </button>
+            
+            <a href="#hero" class="text-sm font-light tracking-[0.35em] hover:opacity-60 transition-opacity font-mono">
+                AION
+            </a>
+            
+            <button class="hover:opacity-60 transition-opacity" onclick="window.location.href='cart.html'">
+                <!-- User's Custom Logo -->
+                <img src="logo.png" alt="Logo" class="w-[18px] h-auto object-contain" style="filter: invert(100%);">
+            </button>
+        </div>
 
-  <!-- slide-down menu -->
-  <div class="nav-menu" id="navMenu">
-    <a href="#hero">AION‑1</a>
-    <a href="#audio">Lineup</a>
-    <a href="#watch">Customizables</a>
-    <a href="#accessory">Accessories</a>
-    <a href="contactus.html">Contact</a>
-  </div>
-</nav>
+        <!-- Dropdown Menu -->
+        <div id="nav-menu" class="pointer-events-auto mt-2 bg-white/95 backdrop-blur-xl text-black rounded-[1.5rem] flex flex-col items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl max-h-0 opacity-0 py-0 px-12">
+            <div class="flex flex-col gap-4 text-center text-xs tracking-[0.2em] uppercase font-medium w-full">
+                <a href="#hero" class="hover:text-neutral-500 transition-colors py-1 relative group block">AION-1</a>
+                <a href="#audio" class="hover:text-neutral-500 transition-colors py-1 relative group block">Lineup</a>
+                <a href="#watch" class="hover:text-neutral-500 transition-colors py-1 relative group block">Customizables</a>
+                <a href="#accessory" class="hover:text-neutral-500 transition-colors py-1 relative group block">Accessories</a>
+                <a href="/vision/index.html" class="hover:text-neutral-500 transition-colors py-1 relative group block">Our Vision</a>
+                <a href="contactus.html" class="hover:text-neutral-500 transition-colors py-1 relative group block">Contact</a>
+                
+            </div>
+        </div>
+        
+        <!-- Cart Indicator (Integrated) -->
+        <div class="absolute right-[-140px] top-1/2 -translate-y-1/2 pointer-events-auto hidden md:block">
+             <button class="bg-white/90 backdrop-blur-md text-black px-5 py-2 rounded-full text-[10px] font-bold tracking-[0.2em] flex items-center gap-3 hover:bg-white transition-all shadow-lg" onclick="window.location.href='cart.html'">
+                BAG <span class="w-1 h-1 bg-black rounded-full"></span> <span id="cartCount">0</span>
+            </button>
+        </div>
+    </nav>
 
     <main>
         <!-- HERO / AION‑1 SECTION -->
@@ -659,7 +755,7 @@ nav.scrolled .nav-bar {
                         Pure, powerful and obsessively minimal. AION‑1 brings back the infinity display,
                         practical dual cameras and bloat‑free software in a body designed for the next decade.
                     </p>
-                    <a href="shop.html" class="primary-cta">SHOP AION‑1</a>
+                    <a href="s1.html" class="primary-cta">SHOP AION‑1</a>
                     <a href="#audio" class="secondary-link">Explore more products</a>
                 </div>
 
@@ -687,14 +783,31 @@ nav.scrolled .nav-bar {
                         <p class="product-copy">
                             The ultimate android experience with the Lineup. 
                             Experience the uncompromised, with AION-1, AION-1(a) and AION-1(b).
-
                         </p>
-                        <div class="product-meta">AION Lineup</div>
+                        <div class="product-meta">AION Lineup ( 3 )</div>
                     </div>
                     <div class="product-image-wrap">
-                        <!-- replace src with your audio product render -->
-                         
-                        <a href="shop.html" class="product-action">SHOP</a>
+                        <a href="s1.html" class="product-action">SHOP</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-shell product-section product-aionpod" id="aionpod">
+            <div class="product-inner">
+                <article class="product-card">
+                    <div>
+                        <div class="product-label">Audio / Gaming</div>
+                        <h2 class="product-title">AION-Pod</h2>
+                        <p class="product-copy">
+                            Carry your entire world of sound and play in the palm of your hand. 
+                            The AION-Pod, created with "Boundless Labs", combines crystal-clear audio with a dedicated retro gaming experience. 
+                            It’s not just a music player; it’s a portal to the golden era of entertainment.
+                        </p>
+                        <div class="product-meta">AION-Pod ( 1 )</div>
+                    </div>
+                    <div class="product-image-wrap">
+                        <a href="/stores/aionpods.html" class="product-action">SHOP</a>
                     </div>
                 </article>
             </div>
@@ -714,8 +827,7 @@ nav.scrolled .nav-bar {
                         <div class="product-meta">Customizables ( 1 )</div>
                     </div>
                     <div class="product-image-wrap">
-                        <!-- replace src with your watch render -->
-                        <a href="aion-watch.html" class="product-action">SHOP</a>
+                         <a href="/stores/custom/index.html" class="product-action">SHOP</a>
                     </div>
                 </article>
             </div>
@@ -735,8 +847,7 @@ nav.scrolled .nav-bar {
                         <div class="product-meta">Accessories ( 4 )</div>
                     </div>
                     <div class="product-image-wrap">
-                        <!-- replace src with your accessory render -->
-                        <a href="aion-accessories.html" class="product-action">SHOP</a>
+                        <a href="/stores/accessories/index.html" class="product-action">SHOP</a>
                     </div>
                 </article>
             </div>
@@ -752,44 +863,92 @@ nav.scrolled .nav-bar {
     </main>
 
     <script>
-        // Custom Cursor
-        const cursor = document.querySelector('.cursor');
-        const follower = document.querySelector('.cursor-follower');
+        // 1. Initialize Icons
+        lucide.createIcons();
 
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-
-            setTimeout(() => {
-                follower.style.left = e.clientX - 10 + 'px';
-                follower.style.top = e.clientY - 10 + 'px';
-            }, 100);
-        });
-
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // 3D Phone Rotation
+        // 2. High Performance Animation Loop (RAF)
+        let mouse = { x: 0, y: 0 };
+        let follower = { x: 0, y: 0 };
+        
+        const cursorEl = document.querySelector('.cursor');
+        const followerEl = document.querySelector('.cursor-follower');
         const phone3d = document.getElementById('phone3d');
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.clientX) / 20;
-            const y = (window.innerHeight / 2 - e.clientY) / 20;
 
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        function animate() {
+            if (cursorEl) {
+                cursorEl.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0) translate(-50%, -50%)`;
+            }
+            if (followerEl) {
+                follower.x += (mouse.x - follower.x) * 0.15; 
+                follower.y += (mouse.y - follower.y) * 0.15;
+                followerEl.style.transform = `translate3d(${follower.x}px, ${follower.y}px, 0) translate(-50%, -50%)`;
+            }
             if (phone3d) {
-                phone3d.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                const targetRotateY = (centerX - mouse.x) / 25; 
+                const targetRotateX = (centerY - mouse.y) / 25;
+                phone3d.style.transform = `rotateY(${targetRotateY}deg) rotateX(${targetRotateX}deg)`;
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 3. Navbar Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        let isMenuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                navMenu.style.maxHeight = '300px';
+                navMenu.style.opacity = '1';
+                navMenu.style.paddingTop = '1.5rem';
+                navMenu.style.paddingBottom = '1.5rem';
+            } else {
+                navMenu.style.maxHeight = '0';
+                navMenu.style.opacity = '0';
+                navMenu.style.paddingTop = '0';
+                navMenu.style.paddingBottom = '0';
             }
         });
 
-        // Generate Particles
+        // 4. Scroll Hide Navbar Logic
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (isMenuOpen) return;
+            if (scrollTop > lastScrollTop && scrollTop > 50) {
+                navbar.style.transform = 'translateY(-10rem)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // 5. Cart Count
+        const CART_KEY = 'aion-cart';
+        function getCart() {
+            try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; }
+        }
+        function updateCartBadge() {
+            const count = getCart().reduce((sum, item) => sum + item.qty, 0);
+            const badge = document.getElementById('cartCount');
+            if(badge) badge.textContent = count;
+        }
+        updateCartBadge();
+
+        // 6. Particles
         const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 40; i++) {
             const particle = document.createElement('div');
             particle.classList.add('particle');
             particle.style.left = Math.random() * 100 + '%';
@@ -798,48 +957,142 @@ nav.scrolled .nav-bar {
             particlesContainer.appendChild(particle);
         }
 
-        // CTA notify behaviour
-        document.querySelector('.cta-button').addEventListener('click', function(e) {
-            e.preventDefault();
-            const email = prompt('Please enter your email to be notified:');
-            if (email) {
-                alert('You will be notified with the latest updates at ' + email);
-            } else {
-                alert('Email not provided. Please try again.');
-            }
+        // 7. CTA / Scrolling
+        const ctaBtn = document.querySelector('.cta-button');
+        if (ctaBtn) {
+            ctaBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const email = prompt('Please enter your email to be notified:');
+                if (email) alert('You will be notified with the latest updates at ' + email);
+            });
+        }
+
+        // 8. SPLIT LOGO TRANSITION HANDLING
+        
+        // Initial Page Load: Reveal (Panels Split from Center to Edges)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.remove('transition-closed');
+                document.body.classList.add('transition-open');
+            }, 300);
         });
 
-        // Smooth Scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+        // Link Click: Cover (Panels Join at Center) -> then Redirect
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
-                if (href && href.startsWith('#')) {
+                
+                // Check if it's a real navigation link (not anchor, not js)
+                if (href && !href.startsWith('#') && !href.startsWith('javascript')) {
                     e.preventDefault();
+                    
+                    // Trigger Transition: Join Panels
+                    document.body.classList.remove('transition-open');
+                    document.body.classList.add('transition-closed');
+                    
+                    // Wait for the animation to complete (1s CSS transition + buffer)
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 1000); 
+                } 
+                // Handle in-page anchors
+                else if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    if(isMenuOpen) {
+                        isMenuOpen = false;
+                        navMenu.style.maxHeight = '0';
+                        navMenu.style.opacity = '0';
+                        navMenu.style.paddingTop = '0';
+                        navMenu.style.paddingBottom = '0';
+                    }
                     const target = document.querySelector(href);
                     if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
             });
         });
 
-        // Floating bar menu toggle
-const navToggle = document.querySelector('.nav-toggle');
-const navMenu = document.getElementById('navMenu');
+        // 9. AI CHAT LOGIC
+        const aiChatToggle = document.getElementById('aiChatToggle');
+        const aiChatWindow = document.getElementById('aiChatWindow');
+        const closeChat = document.getElementById('closeChat');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatMessages = document.getElementById('chatMessages');
+        const apiKey = "AIzaSyCehz2xQjXksCvajvqhL_INnvjx3vDYy3s"; // Set API Key Here
 
-navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('open');
-});
+        aiChatToggle.addEventListener('click', () => {
+            aiChatWindow.classList.toggle('open');
+        });
 
-// close menu on in-page link click
-navMenu.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('open');
-    });
-});
+        closeChat.addEventListener('click', () => {
+            aiChatWindow.classList.remove('open');
+        });
+
+        async function handleSendMessage() {
+            const userText = chatInput.value.trim();
+            if (!userText) return;
+
+            // Add user message
+            addMessage(userText, 'user');
+            chatInput.value = '';
+
+            // Add loading state
+            const loadingId = addMessage('Thinking...', 'ai');
+
+            try {
+                // Prepare the system prompt with context about AION products
+                const systemPrompt = `You are the AION Intelligence assistant. You represent a futuristic, premium tech brand called AION. 
+                Your goal is to help customers choose products concisely and elegantly.
+                
+                Product Knowledge:
+                1. AION-1 (₹9,999): Essential Series. Minimalist design, balanced performance. Great for everyday use.
+                2. AION-1(a) (₹19,999): Pro Performance. Higher specs, better camera, premium materials. Best for power users.
+                3. AION-1(b) (₹12,999): Lite Edition. Affordable, compact, solid basics.
+                4. AION-Pod: A handheld device combining crystal-clear audio with retro gaming capabilities. Created with 'Boundless Labs'.
+                
+                Style: Concise, helpful, polite, and slightly futuristic. Do not use markdown. Keep answers under 3 sentences.`;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: systemPrompt + "\n\nUser Question: " + userText }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I am currently calibrating. Please try again.";
+
+                // Remove loading and add actual response
+                document.getElementById(loadingId).remove();
+                addMessage(aiText, 'ai');
+
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addMessage("Connection interrupted. Please try again.", 'ai');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.textContent = text;
+            div.id = 'msg-' + Date.now();
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return div.id;
+        }
+
+        sendMessage.addEventListener('click', handleSendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
 
     </script>
 </body>

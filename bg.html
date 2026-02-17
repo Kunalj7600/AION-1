@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Clone Stamp Tool</title>
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --panel-color: #252526;
+            --text-color: #d4d4d4;
+            --accent-color: #007acc;
+            --border-color: #3e3e42;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background-color: var(--panel-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #005f9e;
+        }
+
+        button.secondary {
+            background-color: #3e3e42;
+        }
+
+        button.secondary:hover {
+            background-color: #4e4e52;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Main Workspace */
+        .workspace {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                linear-gradient(45deg, #2a2a2a 25%, transparent 25%), 
+                linear-gradient(-45deg, #2a2a2a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #2a2a2a 75%), 
+                linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            cursor: none; /* We will draw our own cursor */
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        /* Instructions Overlay */
+        .instructions {
+            font-size: 0.85rem;
+            color: #aaa;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: auto;
+        }
+
+        .key {
+            background: #444;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: white;
+            font-family: monospace;
+        }
+
+        /* Custom Cursor Elements */
+        #cursor-brush {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            display: none;
+            box-shadow: 0 0 2px rgba(0,0,0,0.8);
+        }
+
+        #cursor-source {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #00ff00; /* Green source marker */
+            background-color: rgba(0, 255, 0, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Clone Stamp Tool</h2>
+    
+    <div class="file-input-wrapper">
+        <button onclick="document.getElementById('upload').click()">Upload Image</button>
+        <input type="file" id="upload" accept="image/*">
+    </div>
+
+    <div class="control-group">
+        <label>Brush Size <span id="val-size">30px</span></label>
+        <input type="range" id="brush-size" min="5" max="200" value="30">
+    </div>
+
+    <div class="control-group">
+        <label>Hardness <span id="val-hardness">50%</span></label>
+        <input type="range" id="brush-hardness" min="0" max="100" value="50">
+    </div>
+
+    <div class="control-group">
+        <label>Opacity <span id="val-opacity">100%</span></label>
+        <input type="range" id="brush-opacity" min="10" max="100" value="100">
+    </div>
+
+    <button class="secondary" id="btn-undo" disabled>Undo (Ctrl+Z)</button>
+    <button class="secondary" id="btn-download">Download Image</button>
+
+    <div class="instructions">
+        <p><strong>How to use:</strong></p>
+        <p>1. <span class="key">Alt</span> + Click to pick source area.</p>
+        <p>2. Click & Drag to paint/remove watermark.</p>
+    </div>
+</div>
+
+<div class="workspace" id="workspace">
+    <canvas id="mainCanvas"></canvas>
+    <div id="cursor-brush"></div>
+    <div id="cursor-source"></div>
+</div>
+
+<script>
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const workspace = document.getElementById('workspace');
+    
+    // UI Elements
+    const brushSizeInput = document.getElementById('brush-size');
+    const hardnessInput = document.getElementById('brush-hardness');
+    const opacityInput = document.getElementById('brush-opacity');
+    const cursorBrush = document.getElementById('cursor-brush');
+    const cursorSource = document.getElementById('cursor-source');
+    const uploadInput = document.getElementById('upload');
+    const undoBtn = document.getElementById('btn-undo');
+    const downloadBtn = document.getElementById('btn-download');
+
+    // Display Values
+    const valSize = document.getElementById('val-size');
+    const valHard = document.getElementById('val-hardness');
+    const valOpac = document.getElementById('val-opacity');
+
+    // State
+    let isDrawing = false;
+    let isAltDown = false;
+    let sourcePoint = null; // {x, y}
+    let undoStack = [];
+    const MAX_HISTORY = 20;
+
+    // Parameters
+    let brushSize = 30;
+    let hardness = 0.5;
+    let opacity = 1.0;
+
+    // Helper Canvas for smooth brush tip generation
+    const brushCanvas = document.createElement('canvas');
+    const bCtx = brushCanvas.getContext('2d');
+
+    // --- Initialization ---
+
+    function resizeCanvas(img) {
+        // limit canvas size to fit window but keep aspect ratio
+        const maxWidth = workspace.clientWidth - 40;
+        const maxHeight = workspace.clientHeight - 40;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width *= ratio;
+            height *= ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        saveState(); // Initial state
+    }
+
+    // --- History / Undo ---
+
+    function saveState() {
+        if (undoStack.length >= MAX_HISTORY) undoStack.shift();
+        undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+        undoBtn.disabled = false;
+    }
+
+    function undo() {
+        if (undoStack.length > 1) {
+            undoStack.pop(); // Remove current state
+            const prevState = undoStack[undoStack.length - 1];
+            ctx.putImageData(prevState, 0, 0);
+        }
+        if (undoStack.length <= 1) undoBtn.disabled = true;
+    }
+
+    // --- Brush Logic ---
+
+    // Updates the custom cursor visual
+    function updateCursor(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX;
+        const y = e.clientY;
+
+        // Check if mouse is over canvas
+        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+            cursorBrush.style.display = 'block';
+            cursorBrush.style.left = x + 'px';
+            cursorBrush.style.top = y + 'px';
+            cursorBrush.style.width = brushSize + 'px';
+            cursorBrush.style.height = brushSize + 'px';
+            
+            // Visual feedback for Alt mode
+            if (isAltDown) {
+                cursorBrush.style.borderColor = '#00ff00';
+                cursorBrush.style.borderWidth = '2px';
+            } else {
+                cursorBrush.style.borderColor = 'rgba(255,255,255,0.8)';
+                cursorBrush.style.borderWidth = '1px';
+            }
+        } else {
+            cursorBrush.style.display = 'none';
+        }
+    }
+
+    function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX - rect.left) * (canvas.width / rect.width),
+            y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    // The core cloning function
+    function paintClone(targetX, targetY) {
+        if (!sourcePoint) return;
+
+        // Calculate offset from the initial source point to current drawing position
+        // Ideally, we want the source to move WITH the mouse (Aligned)
+        // Offset is calculated on mousedown, but here we calculate relative to the current stroke
+        
+        // Setup temporary brush canvas
+        brushCanvas.width = brushSize;
+        brushCanvas.height = brushSize;
+        
+        const radius = brushSize / 2;
+
+        // 1. Draw the Source Image chunk onto the brush canvas
+        // We need to calculate where to grab pixels from.
+        // Source moves relative to mouse movement.
+        // Current Source = Original Source + (CurrentMouse - OriginalMouseStart)
+        // Simplified: We maintain a dynamic source tracker in the mousemove event.
+        
+        bCtx.clearRect(0, 0, brushSize, brushSize);
+        
+        // Draw image from source coordinates to temp canvas (0,0)
+        bCtx.drawImage(
+            canvas, 
+            sourceX - radius, sourceY - radius, brushSize, brushSize, // Source rect
+            0, 0, brushSize, brushSize // Dest rect on temp canvas
+        );
+
+        // 2. Create Feathering (Hardness) using Composite Operation
+        bCtx.globalCompositeOperation = 'destination-in';
+        const gradient = bCtx.createRadialGradient(radius, radius, radius * hardness, radius, radius, radius);
+        gradient.addColorStop(0, 'rgba(0,0,0,1)'); // Fully visible center
+        gradient.addColorStop(1, 'rgba(0,0,0,0)'); // Transparent edge
+        
+        bCtx.fillStyle = gradient;
+        bCtx.fillRect(0, 0, brushSize, brushSize);
+
+        // 3. Draw the prepared brush tip onto the main canvas
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(brushCanvas, targetX - radius, targetY - radius);
+        ctx.globalAlpha = 1.0;
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // --- Event Listeners ---
+
+    // 1. Controls
+    brushSizeInput.addEventListener('input', (e) => {
+        brushSize = parseInt(e.target.value);
+        valSize.textContent = brushSize + 'px';
+    });
+    hardnessInput.addEventListener('input', (e) => {
+        hardness = parseInt(e.target.value) / 100;
+        valHard.textContent = e.target.value + '%';
+    });
+    opacityInput.addEventListener('input', (e) => {
+        opacity = parseInt(e.target.value) / 100;
+        valOpac.textContent = e.target.value + '%';
+    });
+
+    uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => resizeCanvas(img);
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'edited-image.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+
+    undoBtn.addEventListener('click', undo);
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Alt') isAltDown = true;
+        if (e.ctrlKey && e.key === 'z') {
+            e.preventDefault();
+            undo();
+        }
+        updateCursor({ clientX: lastMouseX, clientY: lastMouseY });
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'Alt') isAltDown = false;
+        updateCursor({ clientX: lastMouseX, clientY: lastMouseY });
+    });
+
+    // 2. Mouse Interaction
+    let lastMouseX = 0, lastMouseY = 0;
+    let startMouseX = 0, startMouseY = 0; // Where drag started
+    let startSourceX = 0, startSourceY = 0; // Where source was when drag started
+    let sourceX = 0, sourceY = 0; // Current dynamic source
+
+    document.addEventListener('mousemove', (e) => {
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+        updateCursor(e);
+        
+        if (isDrawing && sourcePoint) {
+            const pos = getMousePos(e);
+            
+            // Calculate how far we have moved from the start of the stroke
+            const dx = pos.x - startMouseX;
+            const dy = pos.y - startMouseY;
+
+            // Move the source point by the same amount
+            sourceX = startSourceX + dx;
+            sourceY = startSourceY + dy;
+
+            // Paint
+            paintClone(pos.x, pos.y);
+            
+            // Move Visual Source Cursor
+            const rect = canvas.getBoundingClientRect();
+            const visualSourceX = (sourceX / (canvas.width / rect.width)) + rect.left;
+            const visualSourceY = (sourceY / (canvas.height / rect.height)) + rect.top;
+            
+            cursorSource.style.display = 'block';
+            cursorSource.style.left = visualSourceX + 'px';
+            cursorSource.style.top = visualSourceY + 'px';
+        }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+        const pos = getMousePos(e);
+
+        if (isAltDown) {
+            // Set Source Mode
+            sourcePoint = { x: pos.x, y: pos.y };
+            
+            // Visual indicator
+            const rect = canvas.getBoundingClientRect();
+            cursorSource.style.left = e.clientX + 'px';
+            cursorSource.style.top = e.clientY + 'px';
+            cursorSource.style.display = 'block';
+            
+            // Flash effect
+            cursorSource.style.transform = "translate(-50%, -50%) scale(1.5)";
+            setTimeout(() => cursorSource.style.transform = "translate(-50%, -50%) scale(1)", 100);
+            
+        } else {
+            // Paint Mode
+            if (!sourcePoint) {
+                alert("Please Alt + Click to select a source area first.");
+                return;
+            }
+            isDrawing = true;
+            saveState(); // Save before stroke
+            
+            // Initialize stroke parameters
+            startMouseX = pos.x;
+            startMouseY = pos.y;
+            startSourceX = sourcePoint.x;
+            startSourceY = sourcePoint.y;
+            sourceX = startSourceX;
+            sourceY = startSourceY;
+
+            // Paint initial dot
+            paintClone(pos.x, pos.y);
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (isDrawing) {
+            isDrawing = false;
+            // Update source point to where we left off (Aligned behavior)
+            // If you want Non-Aligned behavior (source resets every click), comment this line out:
+            sourcePoint = { x: sourceX, y: sourceY }; 
+            
+            cursorSource.style.display = 'none';
+        }
+    });
+
+    // Load a default placeholder or blank canvas
+    const placeholder = new Image();
+    // 1x1 Transparent pixel to init
+    placeholder.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    placeholder.onload = () => {
+        canvas.width = 800;
+        canvas.height = 600;
+        ctx.fillStyle = '#333';
+        ctx.fillRect(0,0,800,600);
+        ctx.fillStyle = '#aaa';
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Upload an image to start', 400, 300);
+    }
+
+</script>
+</body>
+</html>

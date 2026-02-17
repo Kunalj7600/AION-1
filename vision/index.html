@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION - Our Vision</title>
+    
+    <!-- Google Fonts: Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind for UI Overlay -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js (The 3D Engine) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP (For smooth animations) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        body {
+            background-color: #000; /* Fallback color */
+            color: white;
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars, 3D canvas covers all */
+            font-family: 'Space Grotesk', sans-serif; /* Applied Modern Tech Font */
+        }
+        
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5; /* Above background, below UI */
+        }
+
+        /* UI Overlay sits on top of 3D canvas */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none; /* Let clicks pass through to 3D scene */
+        }
+
+        .pointer-events-auto {
+            pointer-events: auto;
+        }
+
+        .glass-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Enhanced text readability */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Transition Overlay (Initially Hidden) -->
+    <div id="transition-overlay" class="fixed inset-0 bg-black z-50 pointer-events-none opacity-0"></div>
+
+    <!-- BACKGROUND LAYER -->
+    <div id="background-container" class="fixed inset-0 z-0 w-full h-full overflow-hidden">
+        <!-- Background Video (Hidden by default via JS if type is image) -->
+        <video id="bg-video" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover hidden">
+            <source src="" type="video/mp4">
+        </video>
+        
+        <!-- Background Image (Hidden by default via JS if type is video) -->
+        <img id="bg-image" src="" alt="Vision Background" class="absolute inset-0 w-full h-full object-cover hidden">
+        
+        <!-- Dimming Overlay -->
+        <div id="dim-overlay" class="absolute inset-0 bg-black pointer-events-none transition-opacity duration-1000"></div>
+    </div>
+
+    <!-- 3D Scene Container -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay Layer -->
+    <div id="ui-layer" class="flex flex-col justify-between p-8">
+        
+        <!-- Navbar (Consistent) -->
+        <nav class="w-full flex justify-center pointer-events-auto">
+            <div class="bg-black/50 backdrop-blur-md px-8 py-3 rounded-full flex items-center justify-between gap-12 border border-white/10">
+                <!-- Link to main index -->
+                <button onclick="window.location.href='../index.html'" class="hover:opacity-60 transition-opacity">
+                    <i data-lucide="arrow-left" width="18"></i>
+                </button>
+                <span class="text-sm font-medium tracking-[0.35em]">AION VISION</span>
+                <div class="w-4"></div> <!-- Spacer -->
+            </div>
+        </nav>
+
+        <!-- Center Text (Initial State) -->
+        <div id="hero-text" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none transition-opacity duration-500">
+            <h1 class="text-6xl md:text-8xl font-bold tracking-[0.1em] text-white mb-4 text-glow">
+                AION
+            </h1>
+            <p class="text-xs tracking-[0.4em] uppercase text-white/80 font-medium text-glow">Drag to Explore · Click to Expand</p>
+        </div>
+
+        <!-- Detail Overlay (Hidden by default) -->
+        <div id="detail-overlay" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md pointer-events-auto opacity-0 scale-95 transition-all duration-500 hidden">
+            <div class="glass-card p-8 rounded-3xl text-center">
+                <h2 id="detail-title" class="text-3xl font-bold tracking-widest mb-4">INNOVATION</h2>
+                <p id="detail-desc" class="text-sm text-gray-300 leading-relaxed mb-8 font-light">
+                    We believe in technology that disappears. Our vision is to create devices that seamlessly integrate into your life, removing barriers between intent and action.
+                </p>
+                <button id="close-detail" class="bg-white text-black px-6 py-2 rounded-full text-xs font-bold tracking-widest hover:scale-105 transition-transform">
+                    CLOSE
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="w-full flex justify-center pb-8 pointer-events-auto">
+            <button id="start-journey-btn" class="group flex items-center gap-3 text-sm tracking-[0.2em] hover:text-gray-300 transition-colors text-glow font-medium">
+                <span class="w-12 h-[1px] bg-white/50 group-hover:w-20 transition-all"></span>
+                START YOUR JOURNEY
+                <span class="w-12 h-[1px] bg-white/50 group-hover:w-20 transition-all"></span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // --- BACKGROUND CONFIGURATION ---
+        const bgConfig = {
+            type: 'image',          // Options: 'image' or 'video'
+            source: '../assets/bgpg1.png', // Path to your image or video file
+            dimming: 0.7            // 0.0 (Bright) to 1.0 (Black/Dark)
+        };
+
+        // Apply Background Settings
+        const bgVideo = document.getElementById('bg-video');
+        const bgImage = document.getElementById('bg-image');
+        const dimOverlay = document.getElementById('dim-overlay');
+
+        dimOverlay.style.opacity = bgConfig.dimming;
+
+        if (bgConfig.type === 'video') {
+            bgVideo.querySelector('source').src = bgConfig.source;
+            bgVideo.load();
+            bgVideo.classList.remove('hidden');
+        } else {
+            bgImage.src = bgConfig.source;
+            bgImage.classList.remove('hidden');
+        }
+
+
+        // --- 1. SETUP THREE.JS SCENE ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        
+        // Fog for depth blending
+        scene.fog = new THREE.FogExp2(0x000000, 0.002); 
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 25; // Adjusted for 40 cards
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // --- 2. SETUP IMAGE LOADER (AUTOMATED) ---
+        const textureLoader = new THREE.TextureLoader();
+
+        // *** CONFIGURATION FOR BULK LOADING ***
+        const imageConfig = {
+            folderPath: '../assets/vision/', 
+            count: 40,                      
+            extension: '.png'               
+        };
+
+        const myImages = [];
+        for (let i = 1; i <= imageConfig.count; i++) {
+            myImages.push(`${imageConfig.folderPath}${i}${imageConfig.extension}`);
+        }
+        if (myImages.length === 0) {
+            myImages.push('image_7a2689.jpg');
+        }
+
+        // --- 3. CREATE GLOBE OF CARDS & MESH ---
+        const cardGroup = new THREE.Group();
+        scene.add(cardGroup);
+
+        const cards = [];
+        const totalCards = 40; // Set to 40
+        const radius = 11;     // Standard radius
+
+        // Uniform Vertical Geometry
+        const geometry = new THREE.PlaneGeometry(3, 4.5);
+
+        for (let i = 0; i < totalCards; i++) {
+            const phi = Math.acos(-1 + (2 * i) / totalCards);
+            const theta = Math.sqrt(totalCards * Math.PI) * phi;
+
+            const x = radius * Math.cos(theta) * Math.sin(phi);
+            const y = radius * Math.sin(theta) * Math.sin(phi);
+            const z = radius * Math.cos(phi);
+
+            const imagePath = myImages[i % myImages.length]; 
+            const texture = textureLoader.load(imagePath, undefined, undefined, (err) => console.warn(`Could not load ${imagePath}`));
+
+            const material = new THREE.MeshBasicMaterial({ 
+                map: texture, 
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.9,
+                color: 0xffffff 
+            });
+            
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(x, y, z);
+            mesh.lookAt(0, 0, 0); 
+            mesh.rotateY(Math.PI); 
+            
+            mesh.userData = { 
+                originalPos: new THREE.Vector3(x, y, z),
+                originalRot: mesh.rotation.clone(),
+                id: i,
+                title: ["INNOVATION", "DESIGN", "CONNECTION", "FUTURE"][i % 4]
+            };
+
+            cardGroup.add(mesh);
+            cards.push(mesh);
+        }
+
+        // --- MESH GENERATION (CONNECTING LINES) ---
+        // We create a line geometry that connects closest points
+        const connectionMaterial = new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.2, 
+            linewidth: 1
+        });
+
+        const linePositions = [];
+        
+        // Loop through all cards to find neighbors
+        cards.forEach((cardA, i) => {
+            const neighbors = [];
+            // Calculate distance to all other cards
+            cards.forEach((cardB, j) => {
+                if(i === j) return;
+                const dist = cardA.position.distanceTo(cardB.position);
+                neighbors.push({ id: j, dist: dist, pos: cardB.position });
+            });
+            
+            // Sort by distance to find nearest
+            neighbors.sort((a, b) => a.dist - b.dist);
+            
+            // Connect to the 3 nearest neighbors for a clean triangular mesh
+            const k = 3; 
+            for(let n=0; n<k; n++) {
+                const neighbor = neighbors[n];
+                // Add line segment vertices (A -> B)
+                linePositions.push(
+                    cardA.position.x, cardA.position.y, cardA.position.z,
+                    neighbor.pos.x, neighbor.pos.y, neighbor.pos.z
+                );
+            }
+        });
+
+        const connectionGeometry = new THREE.BufferGeometry();
+        connectionGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        const connections = new THREE.LineSegments(connectionGeometry, connectionMaterial);
+        
+        // Add the mesh to the group so it rotates with the cards
+        cardGroup.add(connections);
+
+
+        // --- 4. INTERACTION ---
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        const mouse = new THREE.Vector2();
+        const raycaster = new THREE.Raycaster();
+
+        document.addEventListener('mousedown', (e) => {
+            if(e.target.closest('button')) return;
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            if (isDragging) {
+                const deltaMove = {
+                    x: e.clientX - previousMousePosition.x,
+                    y: e.clientY - previousMousePosition.y
+                };
+                const rotationSpeed = 0.005;
+                cardGroup.rotation.y += deltaMove.x * rotationSpeed;
+                cardGroup.rotation.x += deltaMove.y * rotationSpeed;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            }
+        });
+
+        document.addEventListener('mouseup', () => { isDragging = false; });
+
+        window.addEventListener('click', (e) => {
+            if (isDragging || isInsideJourney) return; 
+            if (e.target.closest('button') || e.target.closest('#detail-overlay')) return;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(cards);
+
+            if (intersects.length > 0) {
+                const selected = intersects[0].object;
+                focusOnCard(selected);
+            } else {
+                resetView();
+            }
+        });
+
+        // --- 5. ANIMATION LOGIC ---
+        let focusedCard = null;
+        let isInsideJourney = false;
+
+        function focusOnCard(card) {
+            if(focusedCard === card) return;
+            focusedCard = card;
+            gsap.to('#hero-text', { opacity: 0, duration: 0.5 });
+
+            const targetPos = new THREE.Vector3().copy(card.position).applyQuaternion(cardGroup.quaternion);
+            targetPos.multiplyScalar(1.5); 
+
+            gsap.to(camera.position, {
+                x: targetPos.x, y: targetPos.y, z: targetPos.z,
+                duration: 1.8, ease: "power3.inOut",
+                onUpdate: () => camera.lookAt(0,0,0)
+            });
+
+            const overlay = document.getElementById('detail-overlay');
+            document.getElementById('detail-title').innerText = card.userData.title;
+            overlay.classList.remove('hidden');
+            gsap.to(overlay, { opacity: 1, scale: 1, duration: 0.8, delay: 0.5 });
+        }
+
+        function resetView() {
+            if(!focusedCard) return;
+            focusedCard = null;
+            const overlay = document.getElementById('detail-overlay');
+            gsap.to(overlay, { opacity: 0, scale: 0.95, duration: 0.3, onComplete: () => overlay.classList.add('hidden') });
+            gsap.to('#hero-text', { opacity: 1, duration: 0.5, delay: 0.5 });
+            gsap.to(camera.position, {
+                x: 0, y: 0, z: 25, duration: 1.5, ease: "power3.inOut",
+                onUpdate: () => camera.lookAt(0,0,0)
+            });
+        }
+
+        document.getElementById('close-detail').addEventListener('click', resetView);
+
+        // --- 6. START JOURNEY ---
+        document.getElementById('start-journey-btn').addEventListener('click', () => {
+            isInsideJourney = true;
+            resetView(); 
+            
+            // Hide UI
+            gsap.to('#hero-text', { opacity: 0, duration: 0.5 });
+            gsap.to('#start-journey-btn', { opacity: 0, duration: 0.5, pointerEvents: 'none' });
+
+            // Fade out the mesh lines (cleaner visual during explosion)
+            gsap.to(connectionMaterial, { opacity: 0, duration: 1 });
+
+            // Expand Cards
+            cards.forEach(card => {
+                const targetPos = card.position.clone().normalize().multiplyScalar(radius * 5); 
+                gsap.to(card.position, {
+                    x: targetPos.x, y: targetPos.y, z: targetPos.z,
+                    duration: 2.5, ease: "power2.in"
+                });
+                gsap.to(card.rotation, {
+                    x: card.rotation.x + Math.random(),
+                    y: card.rotation.y + Math.random(),
+                    duration: 2.5, ease: "power2.in"
+                });
+            });
+
+            // Camera Move
+            gsap.to(camera.position, {
+                z: -10, 
+                duration: 2,
+                ease: "power2.in",
+            });
+
+            // Redirect
+            const transitionOverlay = document.getElementById('transition-overlay');
+            gsap.to(transitionOverlay, {
+                opacity: 1,
+                duration: 1.5,
+                delay: 0.5,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    window.location.href = '../index.html'; 
+                }
+            });
+        });
+
+        // --- 7. LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!isDragging && !focusedCard && !isInsideJourney) {
+                cardGroup.rotation.y += 0.001;
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

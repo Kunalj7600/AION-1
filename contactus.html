@@ -1,392 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contact Us - AION</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      background: #000;
-      color: #fff;
-    }
-    nav {
-      width: 100%;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.7);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      backdrop-filter: blur(5px);
-      transition: background 0.3s ease, padding 0.3s ease;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png" />
+    <title>Contact Us - AION</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    }
-    nav.scrolled {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 1rem 4rem;
-    }
-    .nav-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1200px;
-      width: 100%;
-      position: relative;
-    }
-    .logo {
-      font-size: 2rem;
-      font-weight: 200;
-      letter-spacing: 8px;
-      animation: glow 2s ease-in-out infinite alternate;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .logo img {
-      max-width: 60px;
-      display: block;
-    }
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff;
-      }
-      to {
-        text-shadow: 0 0 20px #fff, 0 0 30px #fff;
-      }
-    }
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .nav-links li {
-      opacity: 1;
-      transform: none;
-      transition: all 0.4s ease;
-    }
-    .nav-links a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 300;
-      letter-spacing: 1px;
-      position: relative;
-    }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0;
-      height: 1px;
-      background: #fff;
-      transition: width 0.3s ease;
-    }
-    .nav-links a:hover::after {
-      width: 100%;
-    }
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 8px;
-      border-radius: 8px;
-      position: absolute;
-      top: 50%;
-      right: 1rem;
-      transform: translateY(-50%);
-      transition: transform 0.3s ease;
-    }
-    .hamburger span {
-      width: 25px;
-      height: 3px;
-      background: #fff;
-      border-radius: 5px;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .hamburger.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-    .hamburger.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .hamburger.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
+    <!-- Custom Config for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['monospace'],
+                    },
+                }
+            }
+        }
+    </script>
 
-    .contact-container {
-      max-width: 600px;
-      width: 90%;
-      padding: 2rem;
-      margin: 8rem auto 2rem auto;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      text-align: center;
-      position: relative;
-      z-index: 2;
-      backdrop-filter: blur(2px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    .contact-container .logo {
-      flex-direction: column;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .contact-container .logo img {
-      margin-bottom: 0.5rem;
-    }
-    .contact-info {
-      line-height: 1.8;
-      font-weight: 300;
-      font-size: 1rem;
-    }
-    .contact-info a {
-      color: #fff;
-      text-decoration: none;
-      word-wrap: break-word;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      max-width: 400px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 1rem;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      font-size: 1rem;
-      backdrop-filter: blur(10px);
-    }
-    textarea {
-      resize: none;
-      height: 120px;
-    }
-    button {
-      padding: 1rem;
-      width: 100%;
-      border-radius: 10px;
-      border: none;
-      background: #fff;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      font-size: 1rem;
-    }
-    button:hover {
-      background: #999;
-      color: #fff;
-    }
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-    .particle {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: #fff;
-      opacity: 0.3;
-      border-radius: 50%;
-      animation: float-particle 20s infinite linear;
-    }
-    @keyframes float-particle {
-      0% {
-        transform: translate(0, 0);
-        opacity: 0.3;
-      }
-      50% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translate(100vw, -100vh);
-        opacity: 0;
-      }
-    }
+        :root {
+            --primary: #000;
+            --accent: #fff;
+            --glow: rgba(17, 17, 17, 0.788);
+        }
 
-    @media (max-width: 768px) {
-      .nav-links {
-        position: absolute;
-        top: 70px;
-        right: -220px;
-        flex-direction: column;
-        background: rgba(0, 0, 0, 0.95);
-        width: 200px;
-        padding: 1rem;
-        border-radius: 10px 0 0 10px;
-        opacity: 0;
-        transform: translateX(50px);
-        transition: all 0.4s ease;
-        display: none;
-      }
-      .nav-links.open {
-        display: flex;
-        right: 0;
-        opacity: 1;
-        transform: translateX(0);
-      }
-      .nav-links li {
-        opacity: 0;
-        transform: translateX(20px);
-        transition: all 0.4s ease;
-      }
-      .nav-links.open li {
-        opacity: 1;
-        transform: translateX(0);
-      }
-      .hamburger {
-        display: flex;
-      }
-      .contact-container {
-        margin-top: 9rem;
-        padding: 1.5rem;
-      }
-    }
-    @media (max-width: 480px) {
-      .logo {
-        font-size: 1.5rem;
-        letter-spacing: 4px;
-      }
-      .logo img {
-        max-width: 50px;
-      }
-      .contact-container {
-        padding: 1rem;
-      }
-      input, textarea, button {
-        font-size: 0.9rem;
-        padding: 0.8rem;
-      }
-    }
-  </style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #030303;
+            overflow-x: hidden;
+            cursor: none;
+            background-image: url('/assets/bgpgw.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        /* --- CUSTOM CURSOR STYLES --- */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10001;
+            mix-blend-mode: difference;
+            will-change: transform;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9998;
+            will-change: transform;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-panel {
+            background: linear-gradient(180deg, rgba(192, 191, 191, 0.6) 0%, rgba(173, 171, 171, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(2, 2, 2, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            border-radius: 2px;
+            height: 5px;
+            background: #050505;
+            opacity: 0.8;
+            animation: float-particle 20s infinite linear;
+        }
+
+        @keyframes float-particle {
+            from { transform: translateY(100vh) translateX(0); }
+            to { transform: translateY(-100px) translateX(100px); }
+        }
+    </style>
 </head>
-<body>
-  <nav id="navbar">
-    <div class="nav-container">
-      <div class="logo"><img src="logo.png" alt="AION Logo" />AION</div>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="index.html#phone">AION-1</a></li>
-        <li><a href="index.html#features">Features</a></li>
-      </ul>
-      <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false" role="button" tabindex="0">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-  </nav>
+<body class="selection:bg-white selection:text-black min-h-screen flex flex-col items-center justify-center">
+    
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
 
-  <div class="particles" id="particles"></div>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
 
-  <div class="contact-container">
-    <div class="logo">
-      <img src="logo.png" alt="AION Logo" />
-      AION
-    </div>
-    <div class="contact-info">
-      ☎️ <strong>+91 85889 30528</strong> <br />
-      ✉️ <a href="mailto:kunalj6988@gmail.com">kunalj6988@gmail.com</a><br />
-      📷 <a href="https://instagram.com/aiont_ech" target="_blank" rel="noopener">@aiont_ech</a>
+    <!-- Dynamic Background Gradient -->
+    <div class="fixed inset-0 pointer-events-none opacity-30 z-0"
+         style="background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 70%);">
     </div>
 
-    <form id="contact-form">
-      <input type="text" name="user_name" placeholder="Your Name" required />
-      <input type="email" name="user_email" placeholder="Your Email" required />
-      <textarea name="message" placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-  </div>
+    <!-- NEW NAVIGATION LAYER (Consistent with Index) -->
+    <nav id="navbar" class="fixed top-5 left-0 w-full z-50 flex flex-col items-center pointer-events-none transition-transform duration-300">
+        
+        <!-- Main Bar -->
+        <div class="pointer-events-auto bg-white/90 backdrop-blur-xl text-black px-8 py-3 rounded-full flex items-center justify-between gap-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 min-w-[300px] relative z-20">
+            <button id="menu-toggle" class="w-5 h-5 flex flex-col justify-between group hover:opacity-60 transition-opacity focus:outline-none" aria-label="Menu">
+                <!-- Hamburger Icon -->
+                <span class="w-full h-[2px] bg-black rounded-full group-hover:w-3/4 transition-all"></span>
+                <span class="w-3/4 h-[2px] bg-black rounded-full group-hover:w-full transition-all self-end"></span>
+            </button>
+            
+            <a href="index.html" class="text-sm font-light tracking-[0.35em] hover:opacity-60 transition-opacity font-mono">
+                AION
+            </a>
+            
+            <button class="hover:opacity-60 transition-opacity" onclick="window.location.href='cart.html'">
+                <!-- User's Custom Logo -->
+                <img src="logo.png" alt="Logo" class="w-[18px] h-auto object-contain" style="filter: invert(100%);">
+            </button>
+        </div>
 
-  <!-- EmailJS Library -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    (function () {
-      emailjs.init("8AejkcK88C35rBKof"); // replace with your public key from EmailJS
-    })();
+        <!-- Dropdown Menu -->
+        <div id="nav-menu" class="pointer-events-auto mt-2 bg-white/95 backdrop-blur-xl text-black rounded-[1.5rem] flex flex-col items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl max-h-0 opacity-0 py-0 px-12">
+            <div class="flex flex-col gap-4 text-center text-xs tracking-[0.2em] uppercase font-medium w-full">
+                <a href="index.html#hero" class="hover:text-neutral-500 transition-colors py-1 relative group block">AION-1</a>
+                <a href="index.html#audio" class="hover:text-neutral-500 transition-colors py-1 relative group block">Lineup</a>
+                <a href="index.html#watch" class="hover:text-neutral-500 transition-colors py-1 relative group block">Customizables</a>
+                <a href="index.html#accessory" class="hover:text-neutral-500 transition-colors py-1 relative group block">Accessories</a>
+                <a href="/vision/index.html" class="hover:text-neutral-500 transition-colors py-1 relative group block">Our Vision</a>
+                <a href="contactus.html" class="hover:text-neutral-500 transition-colors py-1 relative group block">Contact</a>
+            </div>
+        </div>
+        
+        <!-- Cart Indicator (Integrated) -->
+        <div class="absolute right-[-140px] top-1/2 -translate-y-1/2 pointer-events-auto hidden md:block">
+             <button class="bg-white/90 backdrop-blur-md text-black px-5 py-2 rounded-full text-[10px] font-bold tracking-[0.2em] flex items-center gap-3 hover:bg-white transition-all shadow-lg" onclick="window.location.href='cart.html'">
+                BAG <span class="w-1 h-1 bg-black rounded-full"></span> <span id="cartCount">0</span>
+            </button>
+        </div>
+    </nav>
 
-    document.getElementById("contact-form").addEventListener("submit", function (event) {
-      event.preventDefault();
-      emailjs.sendForm("service_cz3pckn", "template_6inturw", this).then(
-        function () {
-          alert("Message sent successfully!");
-        },
-        function (error) {
-          alert("Failed to send. Error: " + JSON.stringify(error));
+    <!-- Main Content Area -->
+    <main class="relative z-10 w-full max-w-4xl px-4 py-24 flex flex-col items-center">
+        
+        <div class="glass-panel w-full rounded-[2rem] p-8 md:p-12 relative overflow-hidden">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                
+                <!-- Left Column: Contact Info -->
+                <div class="flex flex-col justify-center space-y-8">
+                    <div>
+                        <h1 class="text-4xl font-extralight tracking-tight mb-2">Get in touch</h1>
+                        <p class="text-black/70 font-light">We are here to help and answer any question you might have.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4 group cursor-pointer">
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-colors">
+                                <i data-lucide="phone" width="18" class="text-black/80"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-black/60 uppercase tracking-widest">Phone</span>
+                                <span class="font-light">+91 85889 30528</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group cursor-pointer">
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-colors">
+                                <i data-lucide="mail" width="18" class="text-black/80"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-black/60 uppercase tracking-widest">Email</span>
+                                <a href="mailto:kunalj6988@gmail.com" class="font-light hover:text-neutral-300 transition-colors">kunalj6988@gmail.com</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group cursor-pointer">
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-colors">
+                                <i data-lucide="instagram" width="18" class="text-black/80"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-black/60 uppercase tracking-widest">Social</span>
+                                <a href="https://instagram.com/aion.tech_" target="_blank" class="font-light hover:text-neutral-300 transition-colors">@aion.tech_</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Form -->
+                <div class="bg-white/5 rounded-2xl p-6 border border-white/5">
+                    <form id="contact-form" class="flex flex-col gap-5">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-black/60 uppercase tracking-widest ml-2">Name</label>
+                            <input type="text" name="user_name" placeholder="John Doe" required 
+                                   class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors placeholder-white/80">
+                        </div>
+                        
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-black/60 uppercase tracking-widest ml-2">Email</label>
+                            <input type="email" name="user_email" placeholder="john@example.com" required 
+                                   class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors placeholder-white/80">
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs text-black/60 uppercase tracking-widest ml-2">Message</label>
+                            <textarea name="message" placeholder="How can we help?" required rows="4"
+                                      class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors placeholder-white/80 resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="mt-2 bg-white text-black font-medium py-3 rounded-xl hover:bg-neutral-200 transition-colors text-sm tracking-wide uppercase">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- EmailJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // EmailJS Setup
+        (function () {
+            emailjs.init("8AejkcK88C35rBKof"); 
+        })();
+
+        document.getElementById("contact-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const btn = this.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Sending...";
+            btn.disabled = true;
+
+            emailjs.sendForm("service_cz3pckn", "template_6inturw", this).then(
+                function () {
+                    alert("Message sent successfully!");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    document.getElementById("contact-form").reset();
+                },
+                function (error) {
+                    alert("Failed to send. Error: " + JSON.stringify(error));
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            );
+        });
+
+        // 1. Custom Cursor Logic
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        let mouseX = 0, mouseY = 0;
+        let followerX = 0, followerY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if(cursor) {
+                cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+            }
+        });
+
+        function animateCursor() {
+            followerX += (mouseX - followerX) * 0.1;
+            followerY += (mouseY - followerY) * 0.1;
+            if(follower) {
+                follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+            }
+            requestAnimationFrame(animateCursor);
         }
-      );
-    });
+        animateCursor();
 
-    // Particle Generation
-    const particlesContainer = document.getElementById("particles");
-    const numParticles = 50;
+        // 2. Navbar Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        let isMenuOpen = false;
 
-    for (let i = 0; i < numParticles; i++) {
-      const particle = document.createElement("div");
-      particle.classList.add("particle");
-      particle.style.left = Math.random() * 100 + "vw";
-      particle.style.top = Math.random() * 100 + "vh";
-      particle.style.animationDelay = Math.random() * 20 + "s";
-      particle.style.animationDuration = 15 + Math.random() * 15 + "s";
-      particlesContainer.appendChild(particle);
-    }
+        menuToggle.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                navMenu.style.maxHeight = '300px';
+                navMenu.style.opacity = '1';
+                navMenu.style.paddingTop = '1.5rem';
+                navMenu.style.paddingBottom = '1.5rem';
+            } else {
+                navMenu.style.maxHeight = '0';
+                navMenu.style.opacity = '0';
+                navMenu.style.paddingTop = '0';
+                navMenu.style.paddingBottom = '0';
+            }
+        });
 
-    // Hamburger Menu Toggle + Animation + Staggered Nav Links
-    const hamburger = document.getElementById("hamburger");
-    const navLinks = document.getElementById("nav-links");
-    const navItems = navLinks.querySelectorAll("li");
-
-    hamburger.addEventListener("click", () => {
-      navLinks.classList.toggle("open");
-      hamburger.classList.toggle("active");
-      hamburger.setAttribute("aria-expanded", hamburger.classList.contains("active"));
-
-      navItems.forEach((item, index) => {
-        if (navLinks.classList.contains("open")) {
-          item.style.transitionDelay = `${index * 0.1 + 0.2}s`;
-        } else {
-          item.style.transitionDelay = "0s";
+        // 3. Cart Count
+        const CART_KEY = 'aion-cart';
+        try {
+            const count = (JSON.parse(localStorage.getItem(CART_KEY)) || []).reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = count;
+        } catch {
+            document.getElementById('cartCount').textContent = 0;
         }
-      });
-    });
 
-    // Navbar background blur & color on scroll
-    window.addEventListener("scroll", () => {
-      const navbar = document.querySelector("nav");
-      if (window.scrollY > 10) {
-        navbar.classList.add("scrolled");
-      } else {
-        navbar.classList.remove("scrolled");
-      }
-    });
-  </script>
+        // 4. Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (20 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
 </body>
 </html>

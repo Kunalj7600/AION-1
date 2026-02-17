@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png" />
+    <title>AION Store</title>
+    
+    <!-- Load Tailwind CSS (for styling) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Lucide Icons (for the icons) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Config for Tailwind to match specific colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['monospace'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        /* Glassmorphism utilities not in default Tailwind CDN */
+        .glass-panel {
+            background: linear-gradient(to bottom, rgba(23, 23, 23, 0.4), rgba(0, 0, 0, 0.4));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Particle Floating Animation */
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.4;
+            }
+            80% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-20vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="selection:bg-white selection:text-black">
+
+    <!-- Dynamic Background -->
+    <div id="dynamic-bg" class="fixed inset-0 pointer-events-none opacity-40 z-0 transition-transform duration-100 ease-linear"
+         style="background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 70%);">
+    </div>
+
+    <!-- Blurred Particles Container -->
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+    
+    <!-- Noise Texture -->
+    <div class="fixed inset-0 pointer-events-none opacity-[0.04] z-0 mix-blend-overlay"
+         style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E');">
+    </div>
+
+    <!-- Cart Indicator (Fixed Top Right) -->
+    <div class="fixed top-5 right-5 z-50 cursor-pointer group" onclick="window.location.href='cart.html'">
+        <button class="bg-white/90 backdrop-blur-md text-black px-5 py-2 rounded-full text-[10px] font-bold tracking-[0.2em] flex items-center gap-3 hover:bg-white transition-all shadow-[0_10px_30px_rgba(0,0,0,0.5)] transform hover:scale-105">
+            BAG <span class="w-1 h-1 bg-black rounded-full"></span> <span id="cartCount">0</span>
+        </button>
+    </div>
+
+    <!-- Navigation Layer -->
+    <nav class="fixed top-5 left-0 w-full z-50 flex flex-col items-center pointer-events-none">
+        
+        <!-- Main Bar -->
+        <div class="pointer-events-auto bg-white/90 backdrop-blur-xl text-black px-8 py-3 rounded-full flex items-center justify-between gap-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 min-w-[300px] relative z-20">
+            <button id="menu-toggle" class="w-5 h-5 flex flex-col justify-between group hover:opacity-60 transition-opacity focus:outline-none" aria-label="Menu">
+                <!-- Hamburger Icon (Default) -->
+                <span class="menu-bar-1 w-full h-[2px] bg-black rounded-full group-hover:w-3/4 transition-all"></span>
+                <span class="menu-bar-2 w-3/4 h-[2px] bg-black rounded-full group-hover:w-full transition-all self-end"></span>
+            </button>
+            
+            <a href="#" class="text-sm font-light tracking-[0.35em] hover:opacity-60 transition-opacity font-mono">
+                AION
+            </a>
+            
+            <button class="hover:opacity-60 transition-opacity">
+                <i data-lucide="user" width="18" height="18"></i>
+            </button>
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div id="nav-menu" class="pointer-events-auto mt-2 bg-white/95 backdrop-blur-xl text-black rounded-[1.5rem] flex flex-col items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl max-h-0 opacity-0 py-0 px-12">
+            <div class="flex flex-col gap-4 text-center text-xs tracking-[0.2em] uppercase font-medium w-full">
+                <a href="#aion-1" class="hover:text-neutral-500 transition-colors py-1 relative group block">AION-1</a>
+                <a href="#lineup" class="hover:text-neutral-500 transition-colors py-1 relative group block">Lineup</a>
+                <a href="#customizables" class="hover:text-neutral-500 transition-colors py-1 relative group block">Customizables</a>
+                <a href="#accessories" class="hover:text-neutral-500 transition-colors py-1 relative group block">Accessories</a>
+                <a href="contactus.html" class="hover:text-neutral-500 transition-colors py-1 relative group block">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-48 pb-20 px-4 max-w-7xl mx-auto flex flex-col items-center">
+        
+        <!-- Title Section -->
+        <div class="mb-24 text-center relative animate-fade-in">
+            <h1 class="text-5xl md:text-7xl font-extralight tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-neutral-700">
+                PHONES
+            </h1>
+            <div class="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent mx-auto mt-8"></div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16 w-full place-items-center">
+            
+            <!-- Product 1: AION-1 -->
+            <div class="group relative w-full max-w-[340px] cursor-pointer perspective-1000" onclick="window.location.href='./phones/aion-1/index.html'">
+                <div class="glass-panel relative h-[520px] w-full rounded-[2.5rem] p-3 transition-all duration-500 ease-out transform group-hover:translate-y-[-12px] group-hover:shadow-[0_20px_50px_rgba(255,255,255,0.05)] group-hover:border-white/10">
+                    <!-- Phone Mockup Container -->
+                    <div class="relative h-[75%] w-full rounded-[2rem] bg-[#111] shadow-inner overflow-hidden transition-transform duration-700 group-hover:scale-[1.02]">
+                        
+                        <!-- Custom Image for AION-1 -->
+                        <img src="./assets/aion1.png" alt="AION-1" class="w-full h-full object-cover drop-shadow-2xl z-10 relative">
+                        
+                        <!-- Glare Effect -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent transition-opacity duration-700 pointer-events-none opacity-0 group-hover:opacity-100 z-20"></div>
+                    </div>
+                    
+                    <!-- Info -->
+                    <div class="absolute bottom-0 left-0 w-full p-6 pb-8">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h3 class="text-xl font-light tracking-widest text-white mb-1">AION-1</h3>
+                                <p class="text-[10px] text-neutral-500 uppercase tracking-[0.25em]">Essential Series</p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-sm font-medium text-white/90">₹9,999</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/5 pt-4 flex justify-between items-center">
+                            <div class="flex gap-2">
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[#222]"></div>
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[#444]"></div>
+                            </div>
+                            <span class="text-[10px] tracking-[0.2em] text-neutral-400 group-hover:text-white transition-colors flex items-center gap-2">
+                                VIEW & BUY <i data-lucide="chevron-right" width="12" height="12"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2: AION-1(a) -->
+            <div class="group relative w-full max-w-[340px] cursor-pointer perspective-1000" onclick="window.location.href='./phones/aion1(a)/index.html'">
+                <div class="glass-panel relative h-[520px] w-full rounded-[2.5rem] p-3 transition-all duration-500 ease-out transform group-hover:translate-y-[-12px] group-hover:shadow-[0_20px_50px_rgba(255,255,255,0.05)] group-hover:border-white/10">
+                    <div class="relative h-[75%] w-full rounded-[2rem] bg-[#111] shadow-inner overflow-hidden transition-transform duration-700 group-hover:scale-[1.02]">
+                        
+                        <!-- Custom Image for AION-1(a) -->
+                        <img src="./assets/aion-1(a).png" alt="AION-1(a)" class="w-full h-full object-cover drop-shadow-2xl z-10 relative">
+
+                        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent transition-opacity duration-700 pointer-events-none opacity-0 group-hover:opacity-100 z-20"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 w-full p-6 pb-8">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h3 class="text-xl font-light tracking-widest text-white mb-1">AION-1(a)</h3>
+                                <p class="text-[10px] text-neutral-500 uppercase tracking-[0.25em]">Pro Performance</p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-sm font-medium text-white/90">₹19,999</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/5 pt-4 flex justify-between items-center">
+                            <div class="flex gap-2">
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-white"></div>
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[#1a1a1a]"></div>
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[red]"></div>
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[#1a1a1a]"></div>
+                            </div>
+                            <span class="text-[10px] tracking-[0.2em] text-neutral-400 group-hover:text-white transition-colors flex items-center gap-2">
+                                VIEW & BUY <i data-lucide="chevron-right" width="12" height="12"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 3: AION-1(b) -->
+            <div class="group relative w-full max-w-[340px] cursor-pointer perspective-1000" onclick="window.location.href='./phones/aion1(b)/index.html'">
+                <div class="glass-panel relative h-[520px] w-full rounded-[2.5rem] p-3 transition-all duration-500 ease-out transform group-hover:translate-y-[-12px] group-hover:shadow-[0_20px_50px_rgba(255,255,255,0.05)] group-hover:border-white/10">
+                    <div class="relative h-[75%] w-full rounded-[2rem] bg-[#111] shadow-inner overflow-hidden transition-transform duration-700 group-hover:scale-[1.02]">
+                        
+                        <!-- Custom Image for AION-1(b) -->
+                        <img src="./assets/aion1(b).png" alt="AION-1(b)" class="w-full h-full object-cover drop-shadow-2xl z-10 relative">
+
+                        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent transition-opacity duration-700 pointer-events-none opacity-0 group-hover:opacity-100 z-20"></div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 w-full p-6 pb-8">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h3 class="text-xl font-light tracking-widest text-white mb-1">AION-1(b)</h3>
+                                <p class="text-[10px] text-neutral-500 uppercase tracking-[0.25em]">Lite Edition</p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-sm font-medium text-white/90">₹12,999</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/5 pt-4 flex justify-between items-center">
+                            <div class="flex gap-2">
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[white]"></div>
+                                <div class="w-2 h-2 rounded-full ring-1 ring-white/20 bg-[black]"></div>
+                            </div>
+                            <span class="text-[10px] tracking-[0.2em] text-neutral-400 group-hover:text-white transition-colors flex items-center gap-2">
+                                VIEW & BUY <i data-lucide="chevron-right" width="12" height="12"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-40 border-t border-white/5 w-full pt-12 pb-8 flex flex-col md:flex-row justify-between items-center text-neutral-500 text-[10px] uppercase tracking-[0.2em] gap-6">
+            <span>© 2025 Aion Inc.</span>
+            <div class="flex gap-12 items-center">
+                <a href="#" class="hover:text-white transition-colors"><i data-lucide="instagram" width="14" height="14"></i></a>
+                <a href="#" class="hover:text-white transition-colors"><i data-lucide="twitter" width="14" height="14"></i></a>
+                <a href="#" class="hover:text-white transition-colors"><i data-lucide="help-circle" width="14" height="14"></i></a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        // 1. Initialize Icons
+        lucide.createIcons();
+
+        // 2. Mouse Tracking Background Effect
+        const bg = document.getElementById('dynamic-bg');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 2 - 1;
+            const y = (e.clientY / window.innerHeight) * 2 - 1;
+            bg.style.background = `radial-gradient(circle at ${50 + x * 5}% ${50 + y * 5}%, #1a1a1a 0%, #000000 70%)`;
+        });
+
+        // 3. Menu Toggle Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        let isMenuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                // Open menu
+                navMenu.style.maxHeight = '300px';
+                navMenu.style.opacity = '1';
+                navMenu.style.paddingTop = '1.5rem';
+                navMenu.style.paddingBottom = '1.5rem';
+            } else {
+                // Close menu
+                navMenu.style.maxHeight = '0';
+                navMenu.style.opacity = '0';
+                navMenu.style.paddingTop = '0';
+                navMenu.style.paddingBottom = '0';
+            }
+        });
+
+        // 4. Cart Count Logic (from your original script)
+        const CART_KEY = 'aion-cart';
+        
+        function getCart() {
+            try {
+                return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        function updateCartBadge() {
+            const count = getCart().reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // Run on load
+        updateCartBadge();
+
+        // 5. Blurred Particles Generation
+        const particlesContainer = document.getElementById('particles-container');
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            
+            // Random styling for variety
+            const size = Math.random() * 30 + 40; // 20px to 60px
+            const blur = Math.random() * 10 + 5; // 10px to 30px blur
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 20 + 20}s`; // 20s to 40s duration
+            particle.style.animationDelay = `-${Math.random() * 30}s`; // Start at random times
+            
+            particle.classList.add('absolute', 'rounded-full', 'bg-white/10');
+            particle.style.filter = `blur(${blur}px)`;
+            particle.style.animationName = 'float-particle';
+            particle.style.animationTimingFunction = 'linear';
+            particle.style.animationIterationCount = 'infinite';
+            
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

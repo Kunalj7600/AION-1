@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION Accessories - Coming Soon</title>
+    <link rel="icon" type="image/png" href="logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['monospace'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-out',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Glassmorphism */
+        .glass-panel {
+            background: linear-gradient(to bottom, rgba(23, 23, 23, 0.6), rgba(0, 0, 0, 0.6));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Particle Animation */
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            20% { opacity: 0.3; }
+            80% { opacity: 0.3; }
+            100% { transform: translateY(-20vh) translateX(20px); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="selection:bg-white selection:text-black h-screen flex flex-col justify-between">
+
+    <!-- Background Elements -->
+    <div id="dynamic-bg" class="fixed inset-0 pointer-events-none opacity-40 z-0 transition-transform duration-100 ease-linear"
+         style="background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 70%);">
+    </div>
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+    <div class="fixed inset-0 pointer-events-none opacity-[0.04] z-0 mix-blend-overlay"
+         style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E');">
+    </div>
+
+    <!-- Navigation (Consistent with Store) -->
+    <nav class="fixed top-5 left-0 w-full z-50 flex flex-col items-center pointer-events-none">
+        <div class="pointer-events-auto bg-white/90 backdrop-blur-xl text-black px-8 py-3 rounded-full flex items-center justify-between gap-12 shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 min-w-[300px] relative z-20">
+            <button onclick="window.location.href='index.html'" class="w-5 h-5 flex items-center justify-center group hover:opacity-60 transition-opacity focus:outline-none">
+               <i data-lucide="arrow-left" width="20"></i>
+            </button>
+            <a href="index.html" class="text-sm font-light tracking-[0.35em] hover:opacity-60 transition-opacity font-mono">AION</a>
+            <div class="w-5"></div> <!-- Spacer for balance -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-grow flex flex-col justify-center items-center px-6 text-center">
+        
+        <div class="max-w-2xl w-full animate-fade-in">
+            <!-- Icon/Graphic -->
+            <div class="mb-12 flex justify-center">
+                <div class="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center bg-white/5 backdrop-blur-md animate-pulse-slow">
+                    <i data-lucide="headphones" width="40" class="text-white/80"></i>
+                </div>
+            </div>
+
+            <!-- Main Title -->
+            <h1 class="text-5xl md:text-7xl font-extralight tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-neutral-600 mb-6">
+                COMING SOON
+            </h1>
+            
+            <p class="text-neutral-400 text-sm md:text-base tracking-[0.25em] uppercase leading-loose mb-16">
+                The next generation of seamless connectivity is being crafted.<br>
+                AION Accessories arriving Winter 2025.
+            </p>
+
+            <!-- Notify Me Form -->
+            <form class="flex flex-col items-center gap-6" onsubmit="event.preventDefault(); alert('You have been added to the waitlist.');">
+                <div class="relative w-full max-w-md group">
+                    <input type="email" required placeholder="Enter your email for early access" 
+                           class="w-full bg-white/5 border border-white/10 rounded-full py-4 px-8 text-center text-sm tracking-widest text-white placeholder-neutral-600 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all backdrop-blur-sm">
+                    <button type="submit" 
+                            class="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform">
+                        <i data-lucide="arrow-right" width="16"></i>
+                    </button>
+                </div>
+                <span class="text-[10px] text-neutral-600 uppercase tracking-widest">Join 12,000+ others on the waitlist</span>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="relative z-10 w-full py-8 text-center border-t border-white/5">
+        <p class="text-[10px] text-neutral-600 uppercase tracking-[0.3em]">© 2025 Aion Inc.</p>
+    </footer>
+
+    <!-- Scripts (Particles & Mouse Movement) -->
+    <script>
+        lucide.createIcons();
+
+        // 1. Mouse Tracking BG
+        const bg = document.getElementById('dynamic-bg');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 2 - 1;
+            const y = (e.clientY / window.innerHeight) * 2 - 1;
+            bg.style.background = `radial-gradient(circle at ${50 + x * 5}% ${50 + y * 5}%, #1a1a1a 0%, #000000 70%)`;
+        });
+
+        // 2. Particles
+        const particlesContainer = document.getElementById('particles-container');
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            const size = Math.random() * 40 + 20;
+            const blur = Math.random() * 20 + 10;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 20 + 20}s`;
+            particle.style.animationDelay = `-${Math.random() * 30}s`;
+            particle.classList.add('absolute', 'rounded-full', 'bg-white/5'); // Slightly more subtle here
+            particle.style.filter = `blur(${blur}px)`;
+            particle.style.animationName = 'float-particle';
+            particle.style.animationTimingFunction = 'linear';
+            particle.style.animationIterationCount = 'infinite';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
